@@ -47,7 +47,3 @@ class DBConnection:
     def close_connection(self):
         self._connection.close()
         self._connection=None
-
-
-
-
