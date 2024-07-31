@@ -1,15 +1,22 @@
 from config.DBConnection import DBConnection
-from src.controllers.BooksController import BooksController
+from models.UsersModel import UsersModel
+from src.controllers.UsersController import UsersController
 
-book = BooksController()
-book_data = {
-    "isbn13":"9780141365467",
-    "author":"Roald Dahl",
-    "title":"Danny the Champion of the World"
+"""borrar todo esto cuando todo esté explicado y verificado"""
+
+
+def potato():
+    user_controller = UsersController()
+
+    user_id = 1
+
+    user_data = {
+        "email": "pikachupikapika@example.com",
     }
 
-register_book = book.add_book(book_data)
-print(register_book)
+    result = user_controller.update_user(user_id, user_data)
+    print(result)
 
-"""myConnection=DBConnection()
-print(myConnection.execute_query("SELECT * FROM books"))"""
+
+if __name__ == "__main__":
+    potato()

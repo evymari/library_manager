@@ -56,7 +56,7 @@ def test_fail_update_user_id_not_found(controller):
     result = controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 500, "message": "User isn't updated successfully"}
+    expected_result = {"status_code": 404, "message": "User isn't updated successfully"}
     assert result["status_code"] == expected_result["status_code"]
 
 
@@ -80,7 +80,7 @@ def test_fail_update_user_incorrect_key(controller):
     result = controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 400, "message": "User isn't updated successfully"}
+    expected_result = {"status_code": 422, "message": "User isn't updated successfully"}
     assert result["status_code"] == expected_result["status_code"]
 
 
@@ -105,7 +105,7 @@ def test_fail_update_user_incorrect_value(controller):
     result = controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 400, "message": "User isn't updated successfully"}
+    expected_result = {"status_code": 422, "message": "User isn't updated successfully"}
     assert result["status_code"] == expected_result["status_code"]
 
 
