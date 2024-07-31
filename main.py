@@ -1,15 +1,20 @@
 from config.DBConnection import DBConnection
 from src.controllers.BooksController import BooksController
+from src.controllers.UsersController import UsersController
 
-book = BooksController()
-book_data = {
-    "isbn13":"9780141365467",
-    "author":"Roald Dahl",
-    "title":"Danny the Champion of the World"
+"""prueba Ana"""
+user_data = {
+        'dni': '12345678A',
+        'name': 'Pika',
+        'surname': 'Chu',
+        'email': 'pika@example.com',
+        'phone': '123456789',
+        'address': '123 Pokemon St',
+        'status': 'active',
+        'current_loans': 0,
+        'max_loans': 5
     }
 
-register_book = book.add_book(book_data)
-print(register_book)
+controller = UsersController()
+print(controller.add_user(user_data))
 
-"""myConnection=DBConnection()
-print(myConnection.execute_query("SELECT * FROM books"))"""

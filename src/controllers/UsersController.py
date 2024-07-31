@@ -23,8 +23,6 @@ class UsersController:
             logging.error(f"Error: {e}")
             return {"status_code": 400, "message": "Error updating user"}
 
-
-
     def data_validator(self, data):
         expected_types = {
             "dni": str,
@@ -46,3 +44,16 @@ class UsersController:
             else:
                 raise KeyError(f"Unexpected key {key} found in data.")
         return True
+
+    """add-user"""
+
+    def add_user(self, data):
+        if self.data_validator(data):
+            try:
+                result = self.user_model.create_user(data)
+                return result
+
+            except Exception as e:
+                return f"Error creating user {e}"
+
+
