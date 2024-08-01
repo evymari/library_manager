@@ -1,9 +1,11 @@
 from models.BooksModel import BooksModel
+from models.GenresModel import GenresModel
 
 
 class BooksController:
     def __init__(self):
         self.books_model = BooksModel()
+        self.genres_model = GenresModel()
 
     def add_book(self, book_data):
         try:
@@ -27,3 +29,5 @@ class BooksController:
         except Exception as e:
             print(f"Error: {e}")
             return dict(status_code=500, message=f"Error adding book: {e}")
+
+    def update_book(self, ):

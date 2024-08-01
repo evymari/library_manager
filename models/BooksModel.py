@@ -1,10 +1,12 @@
 from config.DBConnection import DBConnection
 from datetime import datetime, date
+from models.GenresModel import GenresModel
 
 
 class BooksModel:
     def __init__(self):
         self.db = DBConnection()
+        self.genre_model = GenresModel()
 
     def create_book(self, book_data):
         try:
@@ -74,4 +76,56 @@ class BooksModel:
             return parsed_date
         except ValueError:
             raise ValueError(f"Invalid date format for {date_str}. Expected format is DDMMYYYY.")
+
+    def update_book(self, book_id, book_data):
+        try:
+            update_fields = []
+            params = []
+            allowed_fields = {
+                "stock": "stock = %s",
+                "isbn13": "isbn13 = %s",
+                "author": "author = %s",
+                "original_publication_year": "original_publication_year = %s",
+                "title": "title = %s",
+                "summary": "summary = %s",
+                "genre_id": "genre_id = %s",
+                "availability": "availability = %s",
+                "best_seller": "best_seller = %s",
+            }
+
+            for field in book_data:
+                if field in allowed_fields:
+                    update_fields.append(allowed_fields[field])
+                    params.append(book_data[field])
+
+            if not update_fields:
+                raise ValueError("No valid fields to update.")
+
+            query = f"UPDATE books SET {', '.join(update_fields)} WHERE book_id = %s;"
+            params.append(book_id)
+            self.db.execute_CUD_query(query, tuple(params))
+            return True
+        except Exception as e:
+            print(f"Error updating book with ID {book_id}: {e}")
+            return False
+
+
+"""    def search_books(self, author=None, title=None, genre_id=None):
+        try:
+            query = "SELECT book_id, stock, isbn13, author, original_publication_year, title, summary, genre_id, availability, best_seller FROM books WHERE 1=1 "
+            params = []
+            if author:
+                query += " AND author ILIKE %s"
+                params.append(f"%{author}%")
+            if title:
+                query += " AND title ILIKE %s"
+                params.append(f"%{title}%")
+            if genre_id:
+                query += "AND genre_id = %s"
+                params.append(f"%{genre_id}%")
+            result = self.db.execute_query(query, params)
+            return result
+        except Exception as e:
+            print(f"Error: {e}")"""
+
 

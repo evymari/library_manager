@@ -23,8 +23,6 @@ class UsersController:
             logging.error(f"Error: {e}")
             return {"status_code": 400, "message": "Error updating user"}
 
-
-
     def data_validator(self, data):
         expected_types = {
             "dni": str,

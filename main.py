@@ -1,9 +1,15 @@
 from config.DBConnection import DBConnection
 from src.controllers.BooksController import BooksController
-
+from models.GenresModel import GenresModel
 book = BooksController()
+genres = GenresModel()
 
-print(book.books_model.get_book_by_isbn("9780142412084")[0][0])
+
+update_data = {
+    "summary": "The Hunger Games by Suzanne Collins is a dystopian novel where 16-year-old Katniss Everdeen volunteers to take her sister's place in a televised death match. She must navigate the brutal competition while facing complex political and social challenges in a totalitarian society.",
+    "best_seller": False
+}
+print(book.books_model.update_book(update_data, "isbn13", "9780439023480"))
 
 
 """
