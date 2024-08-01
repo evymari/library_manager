@@ -1,11 +1,13 @@
 from models.BooksModel import BooksModel
 from models.GenresModel import GenresModel
+from src.validators.BooksValidator import BooksValidator
 
 
 class BooksController:
     def __init__(self):
         self.books_model = BooksModel()
         self.genres_model = GenresModel()
+        self.books_validator = BooksValidator()
 
     def add_book(self, book_data):
         try:
@@ -30,4 +32,15 @@ class BooksController:
             print(f"Error: {e}")
             return dict(status_code=500, message=f"Error adding book: {e}")
 
-    def update_book(self, ):
+    def update_book(self, book_id, update_data):
+        try:
+            valid_data = self.books_validator.validate_update_data(update_data)
+
+            updated = self.books_model.update_book(book_id, valid_data)
+            if updated:
+                return dict(status_code=200, message="Book updated succesfully")
+            else:
+                return dict(status_code=500, message="Failed to update book")
+        except Exception as e:
+            print (f"Error updating book: {e}")
+            return dict(status_code=500, message=f"Error updating book: {e}")

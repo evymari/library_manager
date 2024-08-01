@@ -6,11 +6,12 @@ genres = GenresModel()
 
 
 update_data = {
-    "summary": "The Hunger Games by Suzanne Collins is a dystopian novel where 16-year-old Katniss Everdeen volunteers to take her sister's place in a televised death match. She must navigate the brutal competition while facing complex political and social challenges in a totalitarian society.",
+    "summary": "A young farm boy discovers a mysterious dragon egg that hatches, thrusting him into a world of magic and ancient conflict. As Eragon embarks on a journey to become a Dragon Rider, he must confront dark forces threatening his homeland.",
     "best_seller": False
 }
-print(book.books_model.update_book(update_data, "isbn13", "9780439023480"))
+print(book.update_book(20, update_data))
 
+# falta - check other data to update, test with invalid data or types
 
 """
 book_data = {

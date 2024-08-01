@@ -77,7 +77,7 @@ class BooksModel:
         except ValueError:
             raise ValueError(f"Invalid date format for {date_str}. Expected format is DDMMYYYY.")
 
-    def update_book(self, book_id, book_data):
+    def update_book(self, book_id, update_data):
         try:
             update_fields = []
             params = []
@@ -93,10 +93,10 @@ class BooksModel:
                 "best_seller": "best_seller = %s",
             }
 
-            for field in book_data:
+            for field, value in update_data.items():
                 if field in allowed_fields:
                     update_fields.append(allowed_fields[field])
-                    params.append(book_data[field])
+                    params.append(value)  # Append the value, not the field
 
             if not update_fields:
                 raise ValueError("No valid fields to update.")
