@@ -22,6 +22,7 @@ class BooksController:
                 if new_book_id is not None:
                     print(f"Book added: {book_data["title"]} Book ID: {new_book_id}")
                     return dict(status_code=200, message="Book added successfully")
+
                 else:
                     print("Failed to retrieve the new book ID.")
                     return dict(status_code=500, message="Failed to add book.")

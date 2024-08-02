@@ -1,16 +1,5 @@
-from config.DBConnection import DBConnection
-from src.controllers.BooksController import BooksController
-from models.GenresModel import GenresModel
+from src.controllers.LoansController import LoansController
 
-"""Book = BooksController()
-search_criteria= {
-    "author":"Markus Zusak",
-    "title":"The Messenger",
-    "genre_id":None
-}
+loans = LoansController()
 
-print(Book.search_books(search_criteria))"""
-
-
-"""myConnection=DBConnection()
-print(myConnection.execute_query("SELECT * FROM books"))"""
+print(loans.get_loans({}))
