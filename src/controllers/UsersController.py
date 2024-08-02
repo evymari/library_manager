@@ -48,12 +48,25 @@ class UsersController:
     """add-user"""
 
     def add_user(self, data):
-        if self.data_validator(data):
-            try:
-                result = self.user_model.create_user(data)
-                return result
+        try:
+            if self.data_validator(data):
+                dni = data.get("dni")
+                email = data.get("email")
+                if self.user_model.get_user_dni(dni):
+                    raise ValueError("user already exists")
+                if self.user_model.get_user_email(email):
+                    print(email)
+                    raise ValueError("email already exists")
 
-            except Exception as e:
-                return f"Error creating user {e}"
+                result = self.user_model.create_user(data)
+                if result:
+                    return dict(status_code=200, message="User created successfully")
+        except ValueError as e:
+            return dict(status_code=400, message=f"error: {e}")
+        except Exception as e:
+            return dict(status_code=500, message=f"error: {e}")
+
+
+
 
 
