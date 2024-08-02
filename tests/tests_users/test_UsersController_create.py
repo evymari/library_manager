@@ -13,10 +13,10 @@ def test_add_user_successful():
     """
     """Given"""
     user_data = {
-        'dni': '12326321C',
+        'dni': '42326321C',
         'name': 'Pika',
         'surname': 'Chu',
-        'email': '2@example.com',
+        'email': '3@example.com',
         'phone': '123456789',
         'address': '123 Pokemon St',
         'status': 'active',

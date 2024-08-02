@@ -57,14 +57,13 @@ class UsersModel:
             return f"An error occurred while getting user: {e}"
 
     def get_user_email(self, email):
-        print(f"Estoy en get_user_email{email}")
+
         query = "SELECT email FROM users WHERE email = %s;"
         params = (email,)
 
         try:
             result = self.db.execute_query(query, params)
             if result:
-                print(result)
                 return result
         except Exception as e:
             return f"An error occurred while getting user: {e}"
