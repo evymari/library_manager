@@ -1,18 +1,16 @@
 from config.DBConnection import DBConnection
-from models.UsersModel import UsersModel
-from src.controllers.UsersController import UsersController
+from src.controllers.BooksController import BooksController
+from models.GenresModel import GenresModel
 
-
-user_controller = UsersController()
-
-user_id = 1
-
-user_data = {
-    "invalid_key": "pikachuka@example.com",
+"""Book = BooksController()
+search_criteria= {
+    "author":"Markus Zusak",
+    "title":"The Messenger",
+    "genre_id":None
 }
 
-result = user_controller.update_user(user_id, user_data)
-print(result)
+print(Book.search_books(search_criteria))"""
 
 
-
+"""myConnection=DBConnection()
+print(myConnection.execute_query("SELECT * FROM books"))"""
