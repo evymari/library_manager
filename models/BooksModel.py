@@ -38,7 +38,8 @@ class BooksModel:
                        }
     def create_book(self, book_data):
         try:
-            query = "INSERT INTO books(stock, isbn13, author, original_publication_year, title, summary, genre_id, availability, best_seller) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING book_id"
+            query = ("INSERT INTO books(stock, isbn13, author, original_publication_year, title, summary, genre_id, "
+                     "availability, best_seller) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING book_id")
             params = (book_data.get("stock", None),
                       book_data.get("isbn13"),
                       book_data.get("author"),
