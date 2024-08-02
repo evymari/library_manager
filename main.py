@@ -1,15 +1,16 @@
 from config.DBConnection import DBConnection
 from src.controllers.BooksController import BooksController
+from models.GenresModel import GenresModel
 
-book = BooksController()
-book_data = {
-    "isbn13":"9780141365467",
-    "author":"Roald Dahl",
-    "title":"Danny the Champion of the World"
-    }
+"""Book = BooksController()
+search_criteria= {
+    "author":"Markus Zusak",
+    "title":"The Messenger",
+    "genre_id":None
+}
 
-register_book = book.add_book(book_data)
-print(register_book)
+print(Book.search_books(search_criteria))"""
+
 
 """myConnection=DBConnection()
 print(myConnection.execute_query("SELECT * FROM books"))"""
