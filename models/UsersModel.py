@@ -17,13 +17,14 @@ class UsersModel:
             return None
 
     def update_user(self, user_id, updates):
-
+        print('Inside update_user in UsersModel' + str(updates))
         set_clause = ", ".join(f"{key} = %s" for key in updates.keys())
         params = list(updates.values())
         params.append(user_id)
         query = f"UPDATE users SET {set_clause} WHERE id = %s RETURNING *;"
         try:
             result = self.db.execute_query(query, params)
+            print("Result from update_user in UsersModel: " + str(result))
             return result
         except psycopg2.IntegrityError as e:
             print(f"IntegrityError updating user {user_id}: {e}")
