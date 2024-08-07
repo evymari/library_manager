@@ -1,4 +1,5 @@
 from models.LoansModel import LoansModel
+from src.utils.loan_formatting import format_loans
 
 
 class LoansController:
@@ -31,25 +32,15 @@ class LoansController:
         try:
             is_valid, error_message = self.validate_filters(filters)
             if not is_valid:
-                return {"status_code": 400, "message": error_message}
+                raise ValueError(error_message)
 
             loans = self.loan_model.get_loans(filters, limit)
             if not loans:
-                return {"status_code": 404, "message": "No loans found"}
+                raise ValueError("No loans found")
 
-            loans_data = [
-                {
-                    "loan_id": loan[0],
-                    "book_id": loan[1],
-                    "user_id": loan[2],
-                    "status": loan[3],
-                    "start_loan_date": loan[4],
-                    "return_date": loan[5],
-                    "due_date": loan[5],
-                } for loan in loans
-            ]
+            formatted_loans = format_loans(loans)
 
-            return {"status_code": 200, "data": loans_data}
+            return {"status_code": 200, "data": formatted_loans}
         except ValueError as ve:
             return {"status_code": 400, "message": str(ve)}
         except Exception as e:
