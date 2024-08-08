@@ -1,18 +1,5 @@
 import datetime
-
 import pytest
-from unittest.mock import Mock
-
-from src.controllers.LoansController import LoansController
-from models.LoansModel import LoansModel
-
-
-@pytest.fixture
-def mock_loans_controller():
-    mock_loan_model = Mock(spec=LoansModel)
-    loans_controller = LoansController()
-    loans_controller.loan_model = mock_loan_model
-    return loans_controller, mock_loan_model
 
 
 def set_mock_response(mock_loan_model, response):
@@ -105,5 +92,3 @@ def test_get_loans_no_filters(mock_loans_controller):
 
     assert result["status_code"] == 400
     assert result["message"] == "Invalid filter"
-
-

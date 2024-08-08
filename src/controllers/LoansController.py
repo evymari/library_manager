@@ -10,7 +10,7 @@ class LoansController:
         try:
             loan_id = self.loan_model.create_loan(loan_data)
             if not loan_id:
-                raise ValueError("Failed to create loan due to an unknown error.")
+                raise ValueError("Failed to create loan.")
             return {
                 "status_code": 201,
                 "message": "Loan created successfully",
@@ -19,7 +19,9 @@ class LoansController:
         except ValueError as ve:
             return {"status_code": 400, "message": str(ve)}
         except Exception as e:
-            return {"status_code": 500, "message": "Internal server error"}
+            if "Invalid input syntax" in str(e):
+                return {"status_code": 400, "message": "Invalid input syntax for loan creation"}
+            return {"status_code": 500, "message": "Internal server error: " + str(e)}
 
     def validate_filters(self, filters):
         valid_filters = {"loan_id", "book_id", "user_id", "status", "start_loan_date", "return_date", "due_date"}

@@ -1,12 +1,7 @@
-from src.controllers.UsersController import UsersController
-from models.UsersModel import UsersModel
+from models.LoansModel import LoansModel
+from src.controllers.LoansController import LoansController
 
 
-users_controller = UsersController()
-users_model = UsersModel()
+loan_model = LoansModel()
 
-
-
-"""print(users_model.update_user(1, {"email": "pika@example.com"}))"""
-print(users_model.get_user_by_id(1))
-print(users_controller.update_user(1, {"email": "pika@example.com"}))
+print(loan_model.create_loan({"book_id": 'invalid_data', "user_id": 12, "due_date": "2024-12-31"}))
