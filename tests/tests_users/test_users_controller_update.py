@@ -1,13 +1,7 @@
 import pytest
-from src.controllers.UsersController import UsersController
 
 
-@pytest.fixture
-def controller():
-    return UsersController()
-
-
-def test_update_user(controller):
+def test_update_user_successfully(mock_users_controller):
     """
     Given an existing user ID and new user data
     When update_user function is called
@@ -15,28 +9,38 @@ def test_update_user(controller):
     And status 200 is returned
     """
     # Given
+    users_controller, mock_users_model = mock_users_controller
     user_id = 1
     user_data = {
-        'dni': '12345678A',
-        'name': 'Pika',
-        'surname': 'Chu',
         'email': 'pika@example.com',
-        'phone': '123456789',
-        'address': '123 Pokemon St',
-        'status': 'active',
-        'current_loans': 0,
-        'max_loans': 5,
     }
 
+    mock_users_model.get_user_by_id.return_value = {
+        "id": user_id,
+        "email": "oldemail@example.com",
+    }
+
+    mock_users_model.update_user.return_value = [
+        (1, '23067947W', 'Robert', 'Holloway', 'pika@example.com', '927561438',
+         '008 Boone Court\nAnthonyfort, AK 10711', 'suspended', 3, 5)
+    ]
+    mock_users_model.find_user_by_key_excluding_id.return_value = []
+
     # When
-    result = controller.update_user(user_id, user_data)
+    result = users_controller.update_user(user_id, user_data)
+
+    # Debugging information
+    print("Mock update_user called with: ", mock_users_model.update_user.call_args)
 
     # Then
+    mock_users_model.get_user_by_id.assert_called_with(user_id)
+    mock_users_model.update_user.assert_called_with(user_id, user_data)
+
     expected_result = {"status_code": 200, "message": "User updated successfully"}
-    assert result["status_code"] == expected_result["status_code"]
+    assert result == expected_result
 
 
-def test_fail_update_user_id_not_found(controller):
+def test_fail_update_user_id_not_found(mock_users_controller):
     """
         Given not existing user ID and new user data
         When update_user function is called
@@ -44,48 +48,54 @@ def test_fail_update_user_id_not_found(controller):
         And status 404 is returned
         """
     # Given
-    user_id = 999
+
+    users_controller, mock_users_model = mock_users_controller
+
+    user_id = 'not_existing_id'
     user_data = {
-        'dni': '12345678A',
-        'name': 'Pika',
-        'surname': 'Chu',
         'email': 'pika@example.com',
-        'current_loans': 4,
     }
 
+    mock_users_model.get_user_by_id.return_value = None
+    mock_users_model.update_user.return_value = None
+    mock_users_model.find_user_by_key_excluding_id.return_value = []
+
     # When
-    result = controller.update_user(user_id, user_data)
+    result = users_controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 404, "message": "User with this ID does not exist, you cannot update a user that does not exist"}
+    expected_result = {"status_code": 404,
+                       "message": "User with this ID does not exist, you cannot update a user that does not exist"}
     assert result["status_code"] == expected_result["status_code"]
 
 
-def test_fail_update_user_incorrect_key(controller):
+def test_fail_update_user_incorrect_key(mock_users_controller):
     """
         Given existing user ID and incorrect data key
         When update_user function is called
         Then the user isn`t updated successfully
         And the user data remains unchanged
-        """
+    """
     # Given
+    users_controller, mock_users_model = mock_users_controller
+
+    mock_users_model.get_user_by_id.return_value = 1
+    mock_users_model.update_user.return_value = None
+    mock_users_model.find_user_by_key_excluding_id.return_value = []
     user_id = 1
     user_data = {
-        'dni': '12345678A',
-        'nombre': 'Pika',
-        'surname': 'Chu',
-        'email': 'pika@example.com',
+        'incorrect_key': 'Pika',
     }
 
     # When
-    result = controller.update_user(user_id, user_data)
+    result = users_controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 422, "message": "User isn't updated successfully"}
-    assert result == expected_result["status_code"]
+    expected_result = {"status_code": 422, "message": "Invalid key: 'Unexpected key incorrect_key found in data.'"}
+    assert result == expected_result
 
 
-def test_fail_update_user_incorrect_value(controller):
+def test_fail_update_user_incorrect_value(mock_users_controller):
     """
         Given existing user ID and incorrect data value
         When update_user function is called
@@ -93,21 +103,23 @@ def test_fail_update_user_incorrect_value(controller):
         And the user data remains unchanged
         """
     # Given
+    users_controller, mock_users_model = mock_users_controller
+
+    mock_users_model.get_user_by_id.return_value = 1
+    mock_users_model.update_user.return_value = None
+    mock_users_model.find_user_by_key_excluding_id.return_value = []
     user_id = 1
     user_data = {
-        'dni': '12345678A',
-        'name': 8,
-        'surname': 'Chu',
-        'email': 'pika@example.com',
-        'current_loans': 4,
+        'max_loans': 'incorrect_value',
     }
 
     # When
-    result = controller.update_user(user_id, user_data)
+    result = users_controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 422, "message": "User isn't updated successfully"}
-    assert result["status_code"] == expected_result["status_code"]
+    expected_result = {"status_code": 422, "message": 'Invalid data type: Invalid type for max_loans. Expected int, '
+                                                      'got str.'}
+    assert result == expected_result
 
 
 def test_fail_data_validator_incorrect_key(controller):

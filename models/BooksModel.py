@@ -5,37 +5,7 @@ class BooksModel:
     def __init__(self):
         self.db = DBConnection()
 
-        self.genre_list = {"Adventure": 1,
-                       "Science fiction": 2,
-                       "Fantasy": 3,
-                       "Horror": 4,
-                       "Detective": 5,
-                       "Crime": 6,
-                       "Romance": 7,
-                       "Historical": 8,
-                       "Mystery": 9,
-                       "Dystopian": 10,
-                       "Contemporary fiction": 11,
-                       "Urban fantasy": 12,
-                       "Magic realism": 13,
-                       "Spy": 14,
-                       "War": 15,
-                       "Humor": 16,
-                       "Graphic": 17,
-                       "Psychological": 18,
-                       "Bildungsroman (coming-of-age)": 19,
-                       "Satirical": 20,
-                       "Epistolary": 21,
-                       "Gothic": 22,
-                       "Western": 23,
-                       "Young adult": 24,
-                       "Autofiction": 25,
-                       "Social commentary": 26,
-                       "Picaresque": 27,
-                       "Suspense (thriller)": 28,
-                       "Feminist literature": 29,
-                       "LGBTQ+ literature": 30
-                       }
+
     def create_book(self, book_data):
         try:
             query = ("INSERT INTO books(stock, isbn13, author, original_publication_year, title, summary, genre_id, "
@@ -56,8 +26,7 @@ class BooksModel:
         except Exception as e:
             print(f"Error: {e}")
             return None
-# try-except is used to handle errors during database operations like connection issues, SQL errors or data processing
-# if-else is conditional logic to handle scenarios based on outcome of the operation or checks
+
 
     def get_book_by_isbn(self, isbn13):
         try:
@@ -76,30 +45,41 @@ class BooksModel:
         except Exception as e:
             print(f"Error: {e}")
 
-    def search_books(self, author=None, title=None, genre_id=None):
+    def search_books(self, author=None, title=None, genre_id=None, isbn13=None, original_publication_year=None,
+                     availability=None, best_seller=None, entry_date=None):
 
         try:
             query = ("SELECT book_id, stock, isbn13, author, original_publication_year, title, summary, genre_id, "
                      "availability, best_seller FROM books WHERE 1=1 ")
             params = []
             if author:
-               query += " AND author ILIKE %s"
-               params.append(f"%{author}%")
+                query += " AND author ILIKE %s"
+                params.append(f"%{author}%")
             if title:
-               query += " AND title ILIKE %s"
-               params.append(f"%{title}%")
+                query += " AND title ILIKE %s"
+                params.append(f"%{title}%")
             if genre_id:
                 query += "AND genre_id = %s"
                 params.append(f"{genre_id}")
+            if isbn13:
+                query += "AND isbn13 = %s"
+                params.append(f"{isbn13}")
+            if original_publication_year:
+                query += "AND original_publication_year = %s"
+                params.append(f"{original_publication_year}")
+            if availability:
+                query += "AND availability = %s"
+                params.append(f"{availability}")
+            if best_seller:
+                query += "AND best_seller = %s"
+                params.append(f"{best_seller}")
+            if entry_date:
+                query += "AND entry_date = %s"
+                params.append(f"{entry_date}")
             result = self.db.execute_query(query, params)
 
             return result
         except Exception as e:
             print(f"Error: {e}")
-
-    def get_genre_id(self, genre_name):
-        genre_id = self.genre_list.get(genre_name)
-        return  genre_id
-
 
 
