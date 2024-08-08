@@ -1,3 +1,5 @@
+import psycopg2
+from psycopg2 import errors
 from config.DBConnection import DBConnection
 
 
@@ -17,8 +19,17 @@ class LoansModel:
             if result:
                 return result[0][0]
             return None
+        except errors.InvalidTextRepresentation as e:
+            print(f"Invalid input syntax: {e}")
+            return None
+        except psycopg2.IntegrityError as e:
+            print(f"Integrity error: {e}")
+            return None
+        except psycopg2.ProgrammingError as e:
+            print(f"Programming error: {e}")
+            return None
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Unexpected error: {e}")
             return None
 
     def get_loans(self, filters, limit=None):
@@ -66,4 +77,3 @@ class LoansModel:
         except Exception as e:
             print(f"Error getting loans: {e}")
             return None
-
