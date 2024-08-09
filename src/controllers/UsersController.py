@@ -79,9 +79,34 @@ class UsersController:
             else:
                 raise KeyError(f"Unexpected key {key} found in data.")
 
-    def validate_email(self, email):
+    @staticmethod
+    def validate_email(email):
         try:
             validate_email(email, check_deliverability=False)
             return True
         except EmailNotValidError as e:
             raise ValueError(f"Invalid email format: {e}")
+
+    def delete_user(self, user_id):
+        try:
+            current_user_data = self.user_model.get_user_by_id(user_id)
+            if not current_user_data:
+                raise ValueError(f"User with ID {user_id} does not exist")
+
+            deleted_user_id = self.user_model.delete_user(user_id)
+            if not deleted_user_id:
+                raise ValueError(f"User with ID {user_id} could not be deleted")
+
+            return {
+                "status_code": 200,
+                "message": f"User with ID {deleted_user_id} deleted successfully"
+            }
+        except ValueError as ve:
+            logging.error(f"Value Error: {ve}")
+            return {"status_code": 404, "message": str(ve)}
+        except psycopg2.IntegrityError as e:
+            logging.error(f"Integrity Error: {e}")
+            return {"status_code": 400, "message": "Integrity error, possibly due to foreign key constraint"}
+        except Exception as e:
+            logging.error(f"Error: {e}")
+            return {"status_code": 500, "message": "Internal server error"}

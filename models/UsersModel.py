@@ -58,3 +58,17 @@ class UsersModel:
         except Exception as e:
             print(f"Error updating loans count for user {user_id}: {e}")
             return None
+
+    def delete_user(self, user_id):
+        query = "DELETE FROM users WHERE id = %s RETURNING id;"
+        try:
+            result = self.db.execute_query(query, (user_id,))
+            if result:
+                return result[0][0]  # Devuelve el ID del usuario eliminado
+            return None  # Si no se elimina ningún usuario
+        except psycopg2.IntegrityError as e:
+            print(f"IntegrityError deleting user {user_id}: {e}")
+            return None
+        except Exception as e:
+            print(f"Error deleting user {user_id}: {e}")
+            return None

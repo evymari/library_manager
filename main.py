@@ -1,6 +1,17 @@
-from src.controllers.LoansController import LoansController
+from src.controllers.UsersController import UsersController
 
-loans_controller = LoansController()
 
-print(loans_controller.lend_book("wrong_id", 1, "2022-01-01"))
+def main():
+    user_controller = UsersController()
+
+    user_id = 99
+
+    response = user_controller.delete_user(user_id)
+
+    print(response)
+
+
+if __name__ == "__main__":
+    main()
+
 
