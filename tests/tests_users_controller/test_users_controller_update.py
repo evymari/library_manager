@@ -29,9 +29,6 @@ def test_update_user_successfully(mock_users_controller):
     # When
     result = users_controller.update_user(user_id, user_data)
 
-    # Debugging information
-    print("Mock update_user called with: ", mock_users_model.update_user.call_args)
-
     # Then
     mock_users_model.get_user_by_id.assert_called_with(user_id)
     mock_users_model.update_user.assert_called_with(user_id, user_data)
@@ -48,7 +45,6 @@ def test_fail_update_user_id_not_found(mock_users_controller):
         And status 404 is returned
         """
     # Given
-
     users_controller, mock_users_model = mock_users_controller
 
     user_id = 'not_existing_id'
@@ -122,42 +118,42 @@ def test_fail_update_user_incorrect_value(mock_users_controller):
     assert result == expected_result
 
 
-def test_fail_data_validator_incorrect_key(controller):
+def test_fail_data_validator_incorrect_key(mock_users_controller):
     """
         Given incorrect data key
         When data_validator function is called
         Then a key error is raise
         """
     # Given
+    users_controller = mock_users_controller[0]
+
     user_data = {
         'incorrect_key': 'Pika',
     }
-
     # When and Then
-    expected_result = {"status_code": 404}
-    result = controller.data_validator(user_data)
-    assert result["status_code"] == expected_result["status_code"]
-    """with pytest.raises(ValueError):
-        controller.data_validator(user_data)"""
+    with pytest.raises(KeyError) as e:
+        users_controller.data_validator(user_data)
+    assert str(e.value) == "'Unexpected key incorrect_key found in data.'"
 
 
-def test_fail_data_validator_incorrect_value(controller):
+def test_fail_data_validator_incorrect_value(mock_users_controller):
     """
         Given incorrect data value
         When data_validator function is called
         Then a type error is raised
         """
-    # Given
+    users_controller = mock_users_controller[0]
+
     user_data = {
-        "name": 8
+        'max_loans': 'incorrected_value',
     }
-
     # When and Then
-    with pytest.raises(TypeError):
-        controller.data_validator(user_data)
+    with pytest.raises(TypeError) as e:
+        users_controller.data_validator(user_data)
+    assert str(e.value) == 'Invalid type for max_loans. Expected int, got str.'
 
 
-def test_pass_data_validator(controller):
+def test_pass_data_validator(mock_users_controller):
     """
         Given correct data
         When data_validator function is called
@@ -176,7 +172,10 @@ def test_pass_data_validator(controller):
         'max_loans': 5,
     }
 
-    # When and Then
-    result = controller.data_validator(user_data)
+    users_controller = mock_users_controller[0]
+    # When
+    result = users_controller.data_validator(user_data)
+
+    # Then
     expected_result = True
     assert result == expected_result
