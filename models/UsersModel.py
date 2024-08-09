@@ -11,13 +11,14 @@ class UsersModel:
         query = "SELECT * FROM users WHERE id = %s LIMIT 1;"
         try:
             result = self.db.execute_query(query, (user_id,))
-            return result[0][0]
+            if result:
+                return result[0]
+            return None
         except Exception as e:
             print(f"Error retrieving user data {user_id}: {e}")
             return None
 
     def update_user(self, user_id, updates):
-        print('Inside update_user in UsersModel' + str(updates))
         set_clause = ", ".join(f"{key} = %s" for key in updates.keys())
         params = list(updates.values())
         params.append(user_id)
@@ -41,4 +42,19 @@ class UsersModel:
             return result
         except Exception as e:
             print(f"Error getting user {user_id}: {e}")
+            return None
+
+    def update_user_loans_count(self, user_id, new_loans_count):
+        query = "UPDATE users SET current_loans = %s WHERE id = %s RETURNING id;"
+        params = (new_loans_count, user_id)
+        try:
+            result = self.db.execute_query(query, params)
+            if result:
+                return result[0][0]
+            return None
+        except psycopg2.IntegrityError as e:
+            print(f"IntegrityError updating loans count for user {user_id}: {e}")
+            return None
+        except Exception as e:
+            print(f"Error updating loans count for user {user_id}: {e}")
             return None

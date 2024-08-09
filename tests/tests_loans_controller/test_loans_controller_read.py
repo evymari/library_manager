@@ -43,13 +43,13 @@ def assert_success_result(result, expected_length, expected_filters):
      [(1, 1, 1, 'loaned', datetime.date(2024, 7, 30), datetime.date(2022, 12, 31))],
      {"book_id": 1, "status": "loaned"})
 ])
-def test_get_loans(mock_loans_controller, filters, expected_data, expected_filters):
+def test_get_loans(mock_loans_controller_with_loan_model, filters, expected_data, expected_filters):
     """
     Given: I provide filters such as book_id, user_id, etc.
     When: The get_loans method is called
     Then: The response should be checked for correctness and the data should match the filters.
     """
-    loans_controller, mock_loan_model = mock_loans_controller
+    loans_controller, mock_loan_model = mock_loans_controller_with_loan_model
     set_mock_response(mock_loan_model, expected_data)
 
     result = loans_controller.get_loans(filters, None)
@@ -58,14 +58,14 @@ def test_get_loans(mock_loans_controller, filters, expected_data, expected_filte
     assert_success_result(result, len(expected_data), expected_filters)
 
 
-def test_get_loans_not_found(mock_loans_controller):
+def test_get_loans_not_found(mock_loans_controller_with_loan_model):
     """
         Given: I provide invalid filters such as book_id = "invalid"
         When: The get_loans method is called
         Then: The response should be checked return a 400 error
         And:  The message should be "No loans found".
     """
-    loans_controller, mock_loan_model = mock_loans_controller
+    loans_controller, mock_loan_model = mock_loans_controller_with_loan_model
     set_mock_response(mock_loan_model, None)
 
     filters = {"book_id": "invalid"}
@@ -76,7 +76,7 @@ def test_get_loans_not_found(mock_loans_controller):
     assert result["message"] == "No loans found"
 
 
-def test_get_loans_no_filters(mock_loans_controller):
+def test_get_loans_no_filters(mock_loans_controller_with_loan_model):
     """
         Given: I do not provide any filters
         When: The get_loans method is called
@@ -84,7 +84,7 @@ def test_get_loans_no_filters(mock_loans_controller):
         And:  The message should be "Invalid filter".
 
     """
-    loans_controller, mock_loan_model = mock_loans_controller
+    loans_controller, mock_loan_model = mock_loans_controller_with_loan_model
     set_mock_response(mock_loan_model, [(1, 1, 1, 'loaned', datetime.date(2024, 7, 30), datetime.date(2022, 12, 31))])
 
     filters = {"invalid": "invalid"}
