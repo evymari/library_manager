@@ -5,7 +5,6 @@ class BooksModel:
     def __init__(self):
         self.db = DBConnection()
 
-
     def create_book(self, book_data):
         try:
             query = ("INSERT INTO books(stock, isbn13, author, original_publication_year, title, summary, genre_id, "
@@ -26,7 +25,6 @@ class BooksModel:
         except Exception as e:
             print(f"Error: {e}")
             return None
-
 
     def get_book_by_isbn(self, isbn13):
         try:
@@ -82,4 +80,24 @@ class BooksModel:
         except Exception as e:
             print(f"Error: {e}")
 
+    def get_book_stock(self, book_id):
+        try:
+            query = "SELECT stock FROM books WHERE book_id = %s"
+            result = self.db.execute_query(query, (book_id,))
+            if result:
+                return result[0][0]
+            return None
+        except Exception as e:
+            print(f"Error retrieving book stock: {e}")
+            return None
+
+    def update_stock_by_id(self, book_id, amount):
+        try:
+            query = "UPDATE books SET stock = stock + %s WHERE book_id = %s;"
+            params = (amount, book_id)
+            rows_affected = self.db.execute_query(query, params)
+            return rows_affected > 0
+        except Exception as e:
+            print(f"Error updating stock for book ID {book_id}: {e}")
+            return False
 
