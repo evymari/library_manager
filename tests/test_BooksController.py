@@ -69,7 +69,6 @@ def test_pass_book_data_validator():
     When data validator function is called
     Then return True
     """
-
     book_data = {
         "stock": 1,
         "isbn13": "9780142412084",

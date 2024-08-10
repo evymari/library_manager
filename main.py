@@ -6,10 +6,10 @@ genres = GenresModel()
 
 
 update_data = {
-    "summary": "A young farm boy discovers a mysterious dragon egg that hatches, thrusting him into a world of magic and ancient conflict. As Eragon embarks on a journey to become a Dragon Rider, he must confront dark forces threatening his homeland.",
+    "summary": "A science fiction novel about a parasitic alien species that takes over human bodies. The story follows Wanderer, an alien soul, who struggles with her host's strong will and memories, ultimately forming an alliance to seek the remaining free humans.",
     "best_seller": False
 }
-print(book.update_book(20, update_data))
+print(book.update_book(25, update_data))
 
 # falta - check other data to update, test with invalid data or types
 

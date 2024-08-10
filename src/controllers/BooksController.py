@@ -35,7 +35,6 @@ class BooksController:
     def update_book(self, book_id, update_data):
         try:
             valid_data = self.books_validator.validate_update_data(update_data)
-
             updated = self.books_model.update_book(book_id, valid_data)
             if updated:
                 return dict(status_code=200, message="Book updated succesfully")
