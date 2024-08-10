@@ -25,6 +25,7 @@ class BooksValidator:
             "availability": "availability = %s",
             "best_seller": "best_seller = %s",
         }
+        self.required_fields = ["isbn13", "author", "title"]
 
     def validate_update_data(self, update_data):
         # update-data needs to be a dictionary to contain key-value pair
@@ -60,4 +61,9 @@ class BooksValidator:
                     f"Invalid type for {key}. Expected {expected_type.__name__}, got {type(value).__name__}.")
 
         return True
-# check that necessary fields must have information
+
+    def validate_required_fields(self, data):
+        # check that necessary fields must have information
+        empty_fields = [field for field in self.required_fields if not data.get(field)]
+        if empty_fields:
+            raise ValueError(f"{', '.join(empty_fields)} must not be empty")
