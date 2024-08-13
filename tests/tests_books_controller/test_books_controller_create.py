@@ -55,9 +55,9 @@ def test_add_book_stock_updated_correctly(mock_books_controller_with_model):
 
 def test_add_book_fail_missing_required_field(mock_books_controller_with_model):
     """
-    Given incomplete book data
+    Given missing required book data
     When add book function is called,
-    Then an error is raised
+    Then a ValueError is raised
     And the book is not added
     """
     books_controller, mock_books_model = mock_books_controller_with_model
@@ -65,4 +65,47 @@ def test_add_book_fail_missing_required_field(mock_books_controller_with_model):
         "author": "Stephen King",
         "title": "Under the Dome",
     }
-    # unfinished
+
+    result = books_controller.add_book(book_data)
+    assert result["status_code"] == 400
+    assert result["message"] == "Validation error: Required fields missing or empty: isbn13"
+    mock_books_model.create_book.assert_not_called()
+
+def test_add_book_fail_invalid_data_type(mock_books_controller_with_model):
+    """
+    Given invalid data type
+    When add book function is called,
+    Then a TypeError is raised
+    And the book is not added
+    """
+    books_controller, mock_books_model = mock_books_controller_with_model
+    book_data = {
+        "isbn13": 9781501156786,
+        "author": "Stephen King",
+        "title": "Under the Dome",
+    }
+
+    result = books_controller.add_book(book_data)
+    assert result["status_code"] == 400
+    assert result["message"] == "Validation error: Invalid type for isbn13. Expected str, got int."
+    mock_books_model.create_book.assert_not_called()
+
+def test_add_book_fail_invalid_data_key(mock_books_controller_with_model):
+    """
+    Given invalid data key
+    When add book function is called,
+    Then a KeyError is raised
+    And the book is not added
+    """
+    books_controller, mock_books_model = mock_books_controller_with_model
+    book_data = {
+        "isbn13": 9781501156786,
+        "author": "Stephen King",
+        "tittle": "Under the Dome",
+    }
+
+    result = books_controller.add_book(book_data)
+    assert result["status_code"] == 400
+    assert result["message"] == "Validation error: 'Unexpected keys found: tittle'"
+    mock_books_model.create_book.assert_not_called()
+

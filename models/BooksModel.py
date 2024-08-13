@@ -1,5 +1,4 @@
 from config.DBConnection import DBConnection
-from datetime import datetime, date
 from models.GenresModel import GenresModel
 
 
@@ -46,36 +45,6 @@ class BooksModel:
             self.db.execute_CUD_query(query, params)
         except Exception as e:
             print(f"Error: {e}")
-
-    def book_data_validator(self, book_data):
-        expected_types = {
-            "stock": int,
-            "isbn13": str,
-            "author": str,
-            "original_publication_year": date,
-            "title": str,
-            "summary": str,
-            "genre_id": int,
-            "availability": bool,
-            "best_seller": bool
-        }
-        for key, value in book_data.items():
-            if key in expected_types:
-                if key == "original_publication_year":
-                    value = self.parse_date(value)
-                if not isinstance(value, expected_types[key]):
-                    raise TypeError(
-                        f"Invalid type for {key}. Expected {expected_types[key].__name__}, got {type(value).__name__}.")
-            else:
-                raise KeyError(f"Unexpected key {key} found in data.")
-        return True
-
-    def parse_date(self, date_str):
-        try:
-            parsed_date = datetime.strptime(date_str, '%d%m%Y').date()
-            return parsed_date
-        except ValueError:
-            raise ValueError(f"Invalid date format for {date_str}. Expected format is DDMMYYYY.")
 
     def update_book(self, book_id, update_data):
         try:
