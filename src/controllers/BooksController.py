@@ -1,6 +1,6 @@
 from models.BooksModel import BooksModel
 from models.GenresModel import GenresModel
-from src.validators.BooksValidator import BooksValidator
+from src.data_validators.BooksValidator import BooksValidator
 
 
 class BooksController:
