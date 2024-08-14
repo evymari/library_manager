@@ -17,7 +17,7 @@ class BooksController:
             if existing_book:
                 self.books_model.update_stock(valid_data.get("isbn13"))
                 print(
-                    f"ISBN {book_data["isbn13"]} found. Title: {book_data["title"]} Author:{book_data["author"]}. Stock updated.")
+                    f"ISBN {book_data["isbn13"]} already exists. Title: {book_data["title"]} Author:{book_data["author"]}. Stock will be updated by 1.")
                 return dict(status_code=200, message="Book stock updated successfully")
             else:
                 book_data["stock"] = 1
