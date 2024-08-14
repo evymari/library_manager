@@ -1,4 +1,5 @@
 import pytest
+from datetime import date
 from src.data_validators.BooksValidator import BooksValidator
 
 
@@ -240,7 +241,7 @@ def test_fail_validate_required_fields_update_with_empty_values():
 def test_book_data_validator_pass():
     """
     Given correct and valid book data
-    When data validator function is called
+    When book_data_validator function is called
     Then data should pass all validation checks
     And data should remain unchanged
     """
@@ -260,8 +261,167 @@ def test_book_data_validator_pass():
     result = validator.book_data_validator(book_data)
     assert result == book_data
 
-# falta: test with missing required fields, invalid data types, and also for validate_update_data
+
+def test_book_data_validator_fail_missing_required_fields():
+    """
+    Given data with missing required fields
+    When book_data_validator function is called
+    Then a ValueError should be raised
+    """
+    validator = BooksValidator()
+    book_data = {
+        "stock": 1,
+        "isbn13": "9780142412084",
+        "original_publication_year": "13101981",
+        "title": "George's Marvelous Medicine",
+        "summary": "George's Marvelous Medicine by Roald Dahl is a children's book about a boy named George who concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "genre_id": 16,
+        "availability": True,
+        "best_seller": False
+    }
+
+    with pytest.raises(ValueError, match="Required fields missing or empty: author"):
+        validator.book_data_validator(book_data)
 
 
+def test_book_data_validator_fail_invalid_key():
+    """
+    Given data with invalid key
+    When book_data_validator function is called
+    Then a KeyError should be raised
+    """
+    validator = BooksValidator()
+    book_data = {
+        "isbn13": "9780142412084",
+        "author": "Roald Dahl",
+        "title": "George's Marvelous Medicine",
+        "invalid_key": "George's Marvelous Medicine by Roald Dahl is a children's book about a boy named George who concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+    }
+
+    with pytest.raises(KeyError, match="Unexpected keys found: invalid_key"):
+        validator.book_data_validator(book_data)
 
 
+def test_book_data_validator_fail_invalid_data_type():
+    """
+    Given data with invalid data type
+    When book_data_validator function is called
+    Then a TypeError should be raised
+    """
+    validator = BooksValidator()
+    book_data = {
+        "isbn13": "9780142412084",
+        "author": "Roald Dahl",
+        "title": "George's Marvelous Medicine",
+        "summary": "George's Marvelous Medicine by Roald Dahl is a children's book about a boy named George who concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "genre_id": "children's fiction",  # invalid type - should be int.
+    }
+
+    with pytest.raises(TypeError, match="Invalid type for genre_id. Expected int, got str."):
+        validator.book_data_validator(book_data)
+
+
+# integration testing - validate_update_data
+
+def test_validate_update_data_pass():
+    """
+     Given correct and valid book data
+     When validate_update_data function is called
+     Then valid fields should pass all validation checks
+     And returned data should include valid update fields
+     """
+    validator = BooksValidator()
+    update_data = {
+        "stock": 2,
+        "isbn13": "9780142412084",
+        "author": "Roald Dahl",
+        "original_publication_year": "13101981",
+        "title": "George's Marvelous Medicine",
+        "summary": "George's Marvelous Medicine by Roald Dahl is a children's book about a boy named George who concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "genre_id": 16,
+        "availability": True,
+        "best_seller": False
+    }
+
+    result = validator.validate_update_data(update_data)
+    expected_result = {
+        "stock": 2,
+        "isbn13": "9780142412084",
+        "author": "Roald Dahl",
+        "original_publication_year": date(1981, 10, 13),
+        "title": "George's Marvelous Medicine",
+        "summary": "George's Marvelous Medicine by Roald Dahl is a children's book about a boy named George who concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "genre_id": 16,
+        "availability": True,
+        "best_seller": False
+    }
+    assert result == expected_result
+
+
+def test_validate_update_data_pass_missing_required_fields_update_true():
+    """
+    Given update_data that omits required keys
+    When validate_update_data function is called
+    Then the data should pass validation without raising an exception
+    """
+    validator = BooksValidator()
+    update_data = {
+        "title": "George's Marvelous Medicine",
+        "summary": "George's Marvelous Medicine by Roald Dahl is a children's book about a boy named George who concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "availability": True,
+    }
+
+    result = validator.validate_update_data(update_data)
+    assert result == update_data
+
+
+def test_validate_update_data_fail_missing_required_values_update_true():
+    """
+    Given update_data that includes required keys but omits their values
+    When validate_update_data function is called
+    Then a ValueError should be raised
+    """
+    validator = BooksValidator()
+    update_data = {
+        "author": "",
+        "title": "George's Marvelous Medicine",
+        "summary": "George's Marvelous Medicine by Roald Dahl is a children's book about a boy named George who concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "availability": True
+    }
+
+    with pytest.raises(ValueError, match="Required fields missing or empty: author"):
+        validator.validate_update_data(update_data)
+
+
+def test_validate_update_data_fail_invalid_data_key():
+    """
+    Given update_data with invalid data key
+    When validate_update_data function is called
+    Then a ValueError should be raised
+    """
+    validator = BooksValidator()
+    update_data = {
+        "title": "George's Marvelous Medicine",
+        "invalid_type": "George concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",  # invalid key (summary)
+        "available": True  # invalid key (availability)
+    }
+
+    with pytest.raises(ValueError, match="Invalid fields found: invalid_type, available"):
+        validator.validate_update_data(update_data)
+
+
+def test_validate_update_data_fail_invalid_data_type():
+    """
+    Given update_data with invalid data type
+    When validate_update_data function is called
+    Then a TypeError should be raised
+    """
+    validator = BooksValidator()
+    update_data = {
+        "title": "George's Marvelous Medicine",
+        "summary": "George concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "availability": "Yes"  # invalid type - should be boolean
+    }
+
+    with pytest.raises(TypeError, match="Invalid type for availability. Expected bool, got str."):
+        validator.validate_update_data(update_data)
