@@ -40,7 +40,7 @@ class BooksController:
             valid_fields = self.books_validator.validate_update_data(update_data)
             updated = self.books_model.update_book(book_id, valid_fields)
             if updated:
-                return dict(status_code=200, message="Book updated succesfully")
+                return dict(status_code=200, message="Book updated successfully")
             else:
                 return dict(status_code=500, message="Failed to update book")
         except (KeyError, ValueError, TypeError) as e:
