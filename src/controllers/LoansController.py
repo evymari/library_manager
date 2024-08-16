@@ -101,3 +101,15 @@ class LoansController:
             return {"status_code": 400, "message": str(ve)}
         except Exception as e:
             return {"status_code": 500, "message": "Internal server error"}
+
+    def delete_loan(self, loan_id):
+        try:
+            loan_data = self.loan_model.get_loan_by_id(loan_id)
+            if not loan_data:
+                raise ValueError("loan not found")
+            self.loan_model.delete_loan(loan_id)
+            return {"status_code": 200, "message": "loan deleted successfully"}
+        except ValueError as ve:
+            return {"status_code": 400, "message": str(ve)}
+        except Exception as e:
+            return {"status_code": 500, "message": "Internal server error"}

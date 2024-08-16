@@ -77,3 +77,30 @@ class LoansModel:
         except Exception as e:
             print(f"Error getting loans: {e}")
             return None
+
+    def delete_loan(self, loan_id):
+        try:
+            query = "DELETE FROM loans WHERE loan_id = %s"
+            params = (loan_id,)
+            self.db.execute_query(query, params)
+
+        except errors.InvalidTextRepresentation as e:
+            print(f"Invalid input syntax: {e}")
+            return None
+        except psycopg2.IntegrityError as e:
+            print(f"Integrity error: {e}")
+            return None
+        except psycopg2.ProgrammingError as e:
+            print(f"Programming error: {e}")
+            return None
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return None
+
+    def get_loan_by_id(self, loan_id):
+        query = "SELECT * FROM loans WHERE loan_id = %s"
+        params = (loan_id,)
+        result = self.db.execute_query(query, params)
+        if result:
+            return result[0]
+        return None
