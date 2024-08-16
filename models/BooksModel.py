@@ -1,5 +1,4 @@
 from config.DBConnection import DBConnection
-from models.GenresModel import GenresModel
 
 
 class BooksModel:
@@ -9,7 +8,8 @@ class BooksModel:
 
     def create_book(self, book_data):
         try:
-            query = "INSERT INTO books(stock, isbn13, author, original_publication_year, title, summary, genre_id, availability, best_seller) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING book_id"
+            query = ("INSERT INTO books(stock, isbn13, author, original_publication_year, title, summary, genre_id, "
+                     "availability, best_seller) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING book_id")
             params = (book_data.get("stock", None),
                       book_data.get("isbn13"),
                       book_data.get("author"),
@@ -27,8 +27,8 @@ class BooksModel:
             print(f"Error: {e}")
             return None
 
-    # try-except is used to handle errors during database operations like connection issues, SQL errors or data processing
-    # if-else is conditional logic to handle scenarios based on outcome of the operation or checks
+    # try-except is used to handle errors during database operations like connection issues, SQL errors or data
+    # processing if-else is conditional logic to handle scenarios based on outcome of the operation or checks
 
     def get_book_by_isbn(self, isbn13):
         try:
@@ -95,10 +95,14 @@ class BooksModel:
 
     def update_stock_by_id(self, book_id, amount):
         try:
-            query = "UPDATE books SET stock = stock + %s WHERE book_id = %s;"
+            query = "UPDATE books SET stock = stock + %s WHERE book_id = %s RETURNING stock;"
             params = (amount, book_id)
-            rows_affected = self.db.execute_query(query, params)
-            return rows_affected > 0
+            book_stock = self.db.execute_CUD_query(query, params)
+
+            if book_stock is None:
+                raise ValueError("Failed to update stock, rows_affected is None")
+
+            return book_stock
         except Exception as e:
             print(f"Error updating stock for book ID {book_id}: {e}")
             return False
@@ -134,3 +138,8 @@ class BooksModel:
         except Exception as e:
             print(f"Error updating book with ID {book_id}: {e}")
             return False
+
+    @staticmethod
+    def check_book_stock(book_stock):
+        if book_stock <= 0:
+            raise ValueError("Book is out of stock")
