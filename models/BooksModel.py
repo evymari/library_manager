@@ -93,11 +93,19 @@ class BooksModel:
 
     def update_stock_by_id(self, book_id, amount):
         try:
-            query = "UPDATE books SET stock = stock + %s WHERE book_id = %s;"
+            query = "UPDATE books SET stock = stock + %s WHERE book_id = %s RETURNING stock;"
             params = (amount, book_id)
-            rows_affected = self.db.execute_query(query, params)
-            return rows_affected > 0
+            book_stock = self.db.execute_CUD_query(query, params)
+
+            if book_stock is None:
+                raise ValueError("Failed to update stock, rows_affected is None")
+
+            return book_stock
         except Exception as e:
             print(f"Error updating stock for book ID {book_id}: {e}")
             return False
 
+    @staticmethod
+    def check_book_stock(book_stock):
+        if book_stock <= 0:
+            raise ValueError("Book is out of stock")
