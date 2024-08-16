@@ -1,6 +1,26 @@
-from src.controllers.LoansController import LoansController
+from config.DBConnection import DBConnection
+from src.controllers.BooksController import BooksController
+from models.GenresModel import GenresModel
+book = BooksController()
+genres = GenresModel()
 
-loans_controller = LoansController()
+"""
+update_data = {
+    "original_publication_year": "Set in a dystopian future where society is divided into factions based on virtues, Divergent follows Tris Prior as she discovers her identity as a Divergent, a person who does not fit neatly into any one faction. Her journey reveals a conspiracy that threatens the fragile peace of her world.",
+}
+print(book.update_book(5, update_data))
+"""
 
-print(loans_controller.lend_book("wrong_id", 1, "2022-01-01"))
 
+book_data = {
+    "isbn13": "9780062073501",
+    "author": "Agatha Christie",
+    "title": "Murder on the Orient Express"
+}
+
+register_book = book.add_book(book_data)
+print(register_book)
+
+
+"""myConnection=DBConnection()
+print(myConnection.execute_query("SELECT * FROM books"))"""

@@ -27,6 +27,7 @@ def test_verify_book_no_stock(mock_loans_controller_with_book_model):
     """
     loans_controller, mock_book_model = mock_loans_controller_with_book_model
     mock_book_model.get_book_stock.return_value = 0
+    mock_book_model.check_book_stock.side_effect = ValueError("Book is out of stock")
 
     book_id = 1
     with pytest.raises(ValueError) as e:
