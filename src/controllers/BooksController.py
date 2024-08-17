@@ -53,7 +53,7 @@ class BooksController:
 
 
     def validate_search_criteria(self,search_criteria):
-        required_keys = {
+        allowed_keys = {
             "author": (str, type(None)),
             "title": (str, type(None)),
             "isbn13": (str, type(None)),
@@ -64,12 +64,13 @@ class BooksController:
             "genre_name": (str, type(None))
         }
 
-        for key, expected_type in required_keys.items():
-            if key not in search_criteria:
-                raise ValueError(f"Missing key: {key}")
-            if not isinstance(search_criteria[key], expected_type):
+        for key, value in search_criteria.items():
+            if key not in allowed_keys:
+                raise ValueError(f"Unexpected key: {key}")
+            expected_types = allowed_keys[key]
+            if not isinstance(value, expected_types):
                 raise ValueError(
-                    f"Invalid type for key {key}: expected {expected_type}, got {type(search_criteria[key])}")
+                    f"Invalid type for key {key}: expected {expected_types}, got {type(search_criteria[key])}")
 
         return True
 
@@ -78,17 +79,17 @@ class BooksController:
             # Validate search criteria
             self.validate_search_criteria(search_criteria)
 
-            author = search_criteria["author"]
-            title = search_criteria["title"]
-            isbn13 = search_criteria["isbn13"]
-            original_publication_year = search_criteria["original_publication_year"]
-            availability = search_criteria["availability"]
-            best_seller = search_criteria["best_seller"]
-            entry_date = search_criteria["entry_date"]
+            author = search_criteria.get("author")
+            title = search_criteria.get("title")
+            isbn13 = search_criteria.get("isbn13")
+            original_publication_year = search_criteria.get("original_publication_year")
+            availability = search_criteria.get("availability")
+            best_seller = search_criteria.get("best_seller")
+            entry_date = search_criteria.get("entry_date")
 
             genre_name = search_criteria.get("genre_name")  # Retrieve genre_name with default value of None
 
-            genre_id = self.genre_model.get_genre_id(genre_name) if genre_name else None
+            genre_id = self.genres_model.get_genre_id(genre_name) if genre_name else None
             result = self.books_model.search_books(
                 author, title, genre_id, isbn13, original_publication_year,
                 availability, best_seller, entry_date
@@ -107,7 +108,6 @@ class BooksController:
             print(f"Error: {e}")
             return dict(status_code=500, message=f"Error searching book: {e}")
 
-            return dict(status_code=500, message=f"Error searching book: {e}")
 
     def delete_book(self, isbn13):
         try:
