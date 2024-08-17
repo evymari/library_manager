@@ -14,7 +14,10 @@ def test_update_book_updated_correctly(mock_books_controller_with_model):
     update_data = {
         "stock": 1,
         "title": "Under the Dome",
-        "summary": "A thriller about the residents of Chester's Mill, Maine, who are suddenly trapped under an impenetrable, invisible dome, leading to chaos and revealing the darker sides of human nature. As they struggle to survive and uncover the dome''s origin, tensions and conflicts escalate dramatically,",
+        "summary": "A thriller about the residents of Chester's Mill, Maine, who are suddenly trapped under an "
+                   "impenetrable, invisible dome, leading to chaos and revealing the darker sides of human nature. As "
+                   "they struggle to survive and uncover the dome''s origin, tensions and conflicts escalate "
+                   "dramatically,",
         "availability": True,
     }
     mock_books_model.update_book.return_value = True
