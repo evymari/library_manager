@@ -86,3 +86,20 @@ class BooksController:
         except Exception as e:
             print(f"Error: {e}")
             return dict(status_code=500, message=f"Error searching book: {e}")
+
+    def delete_book(self, isbn13):
+        try:
+            # Verificar si el libro existe en la base de datos
+            existing_book = self.books_model.get_book_by_isbn(isbn13)
+
+            if existing_book:
+                # Si el libro existe, eliminarlo de la base de datos
+                self.books_model.remove_book(isbn13)
+                print(f"Book with ISBN {isbn13} has been deleted.")
+                return dict(status_code=200, message="Book deleted successfully")
+            else:
+                print(f"No book found with ISBN {isbn13}.")
+                return dict(status_code=404, message="Book not found")
+        except Exception as e:
+            print(f"Error: {e}")
+            return dict(status_code=500, message=f"Error deleting book: {e}")

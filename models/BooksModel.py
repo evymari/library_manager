@@ -82,4 +82,23 @@ class BooksModel:
         except Exception as e:
             print(f"Error: {e}")
 
+    def delete_book(self, isbn13):
+        try:
+            # Consulta SQL para eliminar un libro basado en el ISBN
+            query = "DELETE FROM books WHERE isbn13 = %s RETURNING book_id"
+            params = (isbn13,)
+
+            # Ejecutar la consulta
+            result = self.db.execute_query(query, params)  # result returns a list of tuples [(123,)]
+
+            # Verificar si el libro fue eliminado
+            if result:
+                print(f"Book with ISBN {isbn13} has been deleted. Book ID: {result[0][0]}")
+                return result[0][0]  # Devuelve el ID del libro eliminado
+            else:
+                print(f"No book found with ISBN {isbn13}.")
+                return None
+        except Exception as e:
+            print(f"Error: {e}")
+            return None
 
