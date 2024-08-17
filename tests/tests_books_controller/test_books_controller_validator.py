@@ -112,6 +112,7 @@ def test_pass_validate_data_type():
     result = validator.validate_data_type(data)
     assert result == data
 
+
 def test_fail_validate_data_type_invalid_data_type():
     """
     Given data with invalid data type
@@ -124,6 +125,7 @@ def test_fail_validate_data_type_invalid_data_type():
     }
     with pytest.raises(TypeError, match="Invalid type for isbn13. Expected str, got int."):
         validator.validate_data_type(data)
+
 
 def test_pass_validate_data_type_original_publication_year():
     """
@@ -219,6 +221,7 @@ def test_pass_validate_required_fields_update_missing_required_fields():
         validator.validate_required_fields(data, is_update=True)
     except ValueError:
         pytest.fail("ValueError raised")
+
 
 def test_fail_validate_required_fields_update_with_empty_values():
     """
@@ -402,7 +405,8 @@ def test_validate_update_data_fail_invalid_data_key():
     validator = BooksValidator()
     update_data = {
         "title": "George's Marvelous Medicine",
-        "invalid_type": "George concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",  # invalid key (summary)
+        "invalid_type": "George concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        # invalid key (summary)
         "available": True  # invalid key (availability)
     }
 

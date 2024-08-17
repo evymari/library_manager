@@ -1,4 +1,5 @@
 from config.DBConnection import DBConnection
+from models.GenresModel import GenresModel
 
 
 class BooksModel:

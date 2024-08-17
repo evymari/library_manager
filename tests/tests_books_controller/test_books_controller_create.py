@@ -16,7 +16,10 @@ def test_add_book_added_correctly(mock_books_controller_with_model):
         "author": "Stephen King",
         "original_publication_year": "01011987",
         "title": "Under the Dome",
-        "summary": "Under the Dome by Stephen King is a thriller about the residents of Chester's Mill, Maine, who are suddenly trapped under an impenetrable, invisible dome, leading to chaos and revealing the darker sides of human nature. As they struggle to survive and uncover the dome''s origin, tensions and conflicts escalate dramatically,",
+        "summary": "Under the Dome by Stephen King is a thriller about the residents of Chester's Mill, Maine, "
+                   "who are suddenly trapped under an impenetrable, invisible dome, leading to chaos and revealing "
+                   "the darker sides of human nature. As they struggle to survive and uncover the dome''s origin, "
+                   "tensions and conflicts escalate dramatically,",
         "genre_id": 4,
         "availability": True,
         "best_seller": False}
