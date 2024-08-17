@@ -12,7 +12,18 @@ class UsersModel:
         try:
             result = self.db.execute_query(query, (user_id,))
             if result:
-                return result[0]
+                return {
+                    "id": result[0][0],
+                    "dni": result[0][1],
+                    "name": result[0][2],
+                    "last_name": result[0][3],
+                    "email": result[0][4],
+                    "phone": result[0][5],
+                    "address": result[0][6],
+                    "current_loans": result[0][8],
+                    "status": result[0][7],
+                    "max_loans": result[0][9]
+                }
             return None
         except Exception as e:
             print(f"Error retrieving user data {user_id}: {e}")
@@ -64,11 +75,33 @@ class UsersModel:
         try:
             result = self.db.execute_query(query, (user_id,))
             if result:
-                return result[0][0]  # Devuelve el ID del usuario eliminado
-            return None  # Si no se elimina ningún usuario
+                return result[0][0]
+            return None
         except psycopg2.IntegrityError as e:
             print(f"IntegrityError deleting user {user_id}: {e}")
             return None
         except Exception as e:
             print(f"Error deleting user {user_id}: {e}")
+
+    @staticmethod
+    def has_reached_max_loans(user_data):
+        return user_data["current_loans"] >= user_data["max_loans"]
+
+    @staticmethod
+    def is_user_active(user_data):
+        return user_data["status"] == "active"
+
+    def suspend_user(self, user_id):
+        query = "UPDATE users SET status = 'suspended' WHERE id = %s RETURNING id;"
+        params = (user_id,)
+        try:
+            result = self.db.execute_query(query, params)
+            if result:
+                return result[0][0]
+            return None
+        except psycopg2.IntegrityError as e:
+            print(f"IntegrityError suspending user {user_id}: {e}")
+            return None
+        except Exception as e:
+            print(f"Error suspending user {user_id}: {e}")
             return None
