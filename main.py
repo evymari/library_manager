@@ -1,27 +1,30 @@
 from src.controllers.UsersController import UsersController
 
-from config.DBConnection import DBConnection
-from src.controllers.BooksController import BooksController
-from models.GenresModel import GenresModel
 
-book = BooksController()
-genres = GenresModel()
+# borrar, son solo comprobaciones.
+def main():
+    user_controller = UsersController()
 
-"""
-update_data = {
-    "original_publication_year": "Set in a dystopian future where society is divided into factions based on virtues, Divergent follows Tris Prior as she discovers her identity as a Divergent, a person who does not fit neatly into any one faction. Her journey reveals a conspiracy that threatens the fragile peace of her world.",
-}
-print(book.update_book(5, update_data))
-"""
+    user_data_update = {
 
-book_data = {
-    "isbn13": "9780062073501",
-    "author": "Agatha Christie",
-    "title": "Murder on the Orient Express"
-}
+        "max_loans": 5
+    }
 
-register_book = book.add_book(book_data)
-print(register_book)
+    update_response = user_controller.update_user(21, user_data_update)
+    print("Update User Response:", update_response)
 
-"""myConnection=DBConnection()
-print(myConnection.execute_query("SELECT * FROM books"))"""
+    delete_response = user_controller.delete_user(1)
+    print("Delete User Response:", delete_response)
+
+    valid_email = user_controller.validate_email("valid@example.com")
+    print("Valid Email Test:", valid_email)
+
+    try:
+        invalid_email = user_controller.validate_email("invalid-email")
+        print("Invalid Email Test:", invalid_email)
+    except ValueError as e:
+        print("Caught an error for invalid email:", str(e))
+
+
+if __name__ == "__main__":
+    main()

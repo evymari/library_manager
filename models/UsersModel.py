@@ -70,19 +70,6 @@ class UsersModel:
             print(f"Error updating loans count for user {user_id}: {e}")
             return None
 
-    def delete_user(self, user_id):
-        query = "DELETE FROM users WHERE id = %s RETURNING id;"
-        try:
-            result = self.db.execute_query(query, (user_id,))
-            if result:
-                return result[0][0]
-            return None
-        except psycopg2.IntegrityError as e:
-            print(f"IntegrityError deleting user {user_id}: {e}")
-            return None
-        except Exception as e:
-            print(f"Error deleting user {user_id}: {e}")
-
     @staticmethod
     def has_reached_max_loans(user_data):
         return user_data["current_loans"] >= user_data["max_loans"]
@@ -105,3 +92,13 @@ class UsersModel:
         except Exception as e:
             print(f"Error suspending user {user_id}: {e}")
             return None
+
+    def delete_user(self, user_id):
+        query = "DELETE FROM users WHERE id = %s RETURNING id;"
+        try:
+            result = self.db.execute_query(query, (user_id,))
+            return result[0][0] if result else None
+        except psycopg2.IntegrityError as e:
+            raise RuntimeError(f"IntegrityError deleting user {user_id}: {e}")
+        except Exception as e:
+            raise RuntimeError(f"Error deleting user {user_id}: {e}")
