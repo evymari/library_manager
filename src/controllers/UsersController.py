@@ -85,6 +85,22 @@ class UsersController:
             raise ValueError(f"Invalid email format: {e}")
 
     def delete_user(self, user_id):
+        user = self.user_model.get_user_by_id(user_id)
+        if not user:
+            return {"status_code": 404, "message": f"User with ID {user_id} does not exist."}
+
+        if user['status'] == 'inactive':
+            return {
+                "status_code": 403,
+                "message": "Cannot delete an inactive user due to data retention policy."
+            }
+
+        if user['status'] == 'suspended':
+            return {
+                "status_code": 403,
+                "message": "Cannot delete a suspended user due to data retention policy."
+            }
+
         print(f"Checking active loans for user_id: {user_id}")
         loans = self.loans_model.get_loans_by_user_id(user_id)
         print("Loans found for user:", loans)
