@@ -12,15 +12,19 @@ def test_delete_user_successfully(mock_users_controller, mocker):
     users_controller, mock_users_model = mock_users_controller
     user_id = 1
 
+    # Mocking the get_user_by_id method to simulate an existing user
     mock_users_model.get_user_by_id.return_value = {
         "id": user_id,
         "email": "pika@example.com",
         "status": "active",
     }
 
-    # Usando mocker para hacer el mock de LoansModel dentro del controlador
+    # Mocking the loans_model to simulate no active loans for the user
     mock_loans_model = mocker.patch.object(users_controller, 'loans_model', autospec=True)
     mock_loans_model.get_loans_by_user_id.return_value = []
+
+    # Mocking delete_user to return the correct user_id
+    mock_users_model.delete_user.return_value = user_id
 
     # When
     result = users_controller.delete_user(user_id)
@@ -30,7 +34,7 @@ def test_delete_user_successfully(mock_users_controller, mocker):
     assert result == expected_result
 
 
-def test_fail_delete_user_with_active_loans(mock_users_controller):
+def test_fail_delete_user_with_active_loans(mock_users_controller, mocker):
     """
     Given an existing user ID with active loans
     When delete_user function is called
@@ -47,7 +51,8 @@ def test_fail_delete_user_with_active_loans(mock_users_controller):
         "status": "active",
     }
 
-    mock_users_model.get_loans_by_user_id.return_value = [
+    mock_loans_model = mocker.patch.object(users_controller, 'loans_model', autospec=True)
+    mock_loans_model.get_loans_by_user_id.return_value = [
         (126, 1, 1, 'loaned', '2024-08-01', '2024-08-15', None)
     ]
 
@@ -76,7 +81,7 @@ def test_fail_delete_user_not_found(mock_users_controller):
     result = users_controller.delete_user(user_id)
 
     # Then
-    expected_result = {"status_code": 404, "message": "User with this ID does not exist."}
+    expected_result = {"status_code": 404, "message": f"User with ID {user_id} does not exist."}
     assert result == expected_result
 
 
