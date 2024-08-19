@@ -126,19 +126,18 @@ class UsersModel:
 
     """find out if user is already registered"""
 
-    def get_user_dni(self, dni):
+    def get_user_by_dni(self, dni):
 
-        # select user dni from sql
         query = "SELECT dni FROM users WHERE dni = %s;"
         params = (dni,)
 
-        # Check if DNI already exists in the data dictionary
         try:
             result = self.db.execute_query(query, params)
             if result:
-                return result
+                return result[0][0]
         except Exception as e:
-            return f"An error occurred while getting user: {e}"
+            print (f"An error occurred while getting user: {e}")
+            return None
 
     def get_user_email(self, email):
 
@@ -148,8 +147,9 @@ class UsersModel:
         try:
             result = self.db.execute_query(query, params)
             if result:
-                return result
+                return result[0][0]
         except Exception as e:
-            return f"An error occurred while getting user: {e}"
+            print(f"An error occurred while getting user: {e}")
+            return None
 
 
