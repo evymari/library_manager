@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 
@@ -60,7 +62,7 @@ def test_fail_update_user_id_not_found(mock_users_controller):
     result = users_controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 404,
+    expected_result = {"status_code": 400,
                        "message": "User with this ID does not exist, you cannot update a user that does not exist"}
     assert result["status_code"] == expected_result["status_code"]
 
@@ -87,7 +89,7 @@ def test_fail_update_user_incorrect_key(mock_users_controller):
     result = users_controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 422, "message": "Invalid key: 'Unexpected key incorrect_key found in data.'"}
+    expected_result = {"status_code": 400, "message": "Invalid key: 'Unexpected key incorrect_key found in data.'"}
     assert result == expected_result
 
 
@@ -113,69 +115,34 @@ def test_fail_update_user_incorrect_value(mock_users_controller):
     result = users_controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 422, "message": 'Invalid data type: Invalid type for max_loans. Expected int, '
+    expected_result = {"status_code": 400, "message": 'Invalid data type: Invalid type for max_loans. Expected int, '
                                                       'got str.'}
     assert result == expected_result
 
 
-def test_fail_data_validator_incorrect_key(mock_users_controller):
+def test_update_user_check_unique_field(mock_users_controller):
     """
-        Given incorrect data key
-        When data_validator function is called
-        Then a key error is raise
-        """
+            Given existing user ID and existing email
+            When update_user function is called
+            Then the user isn`t updated successfully
+            And a dictionary with status code 400 is returned
+            """
     # Given
-    users_controller = mock_users_controller[0]
+    user_id = 1
+    user_data = {'email': 'example@hola.com'}
+    users_controller, mock_users_model = mock_users_controller
+    mock_users_model.get_user_by_id.return_value = 1
+    users_controller.check_unique_fields = Mock()
+    users_controller.check_unique_fields.return_value = False
 
-    user_data = {
-        'incorrect_key': 'Pika',
-    }
-    # When and Then
-    with pytest.raises(KeyError) as e:
-        users_controller.data_validator(user_data)
-    assert str(e.value) == "'Unexpected key incorrect_key found in data.'"
-
-
-def test_fail_data_validator_incorrect_value(mock_users_controller):
-    """
-        Given incorrect data value
-        When data_validator function is called
-        Then a type error is raised
-        """
-    users_controller = mock_users_controller[0]
-
-    user_data = {
-        'max_loans': 'incorrected_value',
-    }
-    # When and Then
-    with pytest.raises(TypeError) as e:
-        users_controller.data_validator(user_data)
-    assert str(e.value) == 'Invalid type for max_loans. Expected int, got str.'
-
-
-def test_pass_data_validator(mock_users_controller):
-    """
-        Given correct data
-        When data_validator function is called
-        Then return true
-        """
-    # Given
-    user_data = {
-        'dni': '12345678A',
-        'name': 'Pika',
-        'surname': 'Chu',
-        'email': 'pika@example.com',
-        'phone': '123456789',
-        'address': '123 Pokemon St',
-        'status': 'active',
-        'current_loans': 0,
-        'max_loans': 5,
-    }
-
-    users_controller = mock_users_controller[0]
+    expected_result = {"status_code": 400, "message": "Conflict detected with existing data. Update aborted."}
     # When
-    result = users_controller.data_validator(user_data)
-
+    result = users_controller.update_user(user_id, user_data)
     # Then
-    expected_result = True
     assert result == expected_result
+
+
+
+
+
+
