@@ -8,7 +8,7 @@ def test_update_book_updated_correctly(mock_books_controller_with_model):
     Then data is updated correctly
     And status 200 is returned
     """
-    # Arrange
+    # Given
     books_controller, mock_books_model = mock_books_controller_with_model
     book_id = 123
     update_data = {
@@ -21,9 +21,9 @@ def test_update_book_updated_correctly(mock_books_controller_with_model):
         "availability": True,
     }
     mock_books_model.update_book.return_value = True
-    # Act
+    # When
     result = books_controller.update_book(book_id, update_data)
-    # Assert
+    # Then
     mock_books_model.update_book.assert_called_with(book_id, update_data)
     assert result["status_code"] == 200
     assert result["message"] == "Book updated successfully"
@@ -36,15 +36,15 @@ def test_update_book_validation_error(mock_books_controller_with_model):
     Then a validation error is raised
     And status 400 is returned
     """
-    # Arrange
+    # Given
     books_controller, mock_books_model = mock_books_controller_with_model
     book_id = 123
     update_data = {
         "invalid_field": ""
     }
-    # Act
+    # When
     result = books_controller.update_book(book_id, update_data)
-    # Assert
+    # Then
     assert result["status_code"] == 400
     assert "Validation error" in result["message"]
     mock_books_model.update_book.assert_not_called()
@@ -57,7 +57,7 @@ def test_update_book_failure(mock_books_controller_with_model):
     And the update operation fails
     Then a status 500 is returned
     """
-    # Arrange
+    # Given
     books_controller, mock_books_model = mock_books_controller_with_model
     book_id = 123
     update_data = {
@@ -66,9 +66,9 @@ def test_update_book_failure(mock_books_controller_with_model):
         "availability": True,
     }
     mock_books_model.update_book.return_value = False
-    # Act
+    # When
     result = books_controller.update_book(book_id, update_data)
-    # Assert
+    # Then
     mock_books_model.update_book.assert_called_once_with(book_id, update_data)
     assert result["status_code"] == 500
     assert result["message"] == "Failed to update book"
