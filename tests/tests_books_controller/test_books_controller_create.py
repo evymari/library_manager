@@ -78,6 +78,7 @@ def test_add_book_fail_missing_required_field(mock_books_controller_with_model):
     assert result["message"] == "Validation error: Required fields missing or empty: isbn13"
     mock_books_model.create_book.assert_not_called()
 
+
 def test_add_book_fail_invalid_data_type(mock_books_controller_with_model):
     """
     Given invalid data type
@@ -98,6 +99,7 @@ def test_add_book_fail_invalid_data_type(mock_books_controller_with_model):
     assert result["status_code"] == 400
     assert result["message"] == "Validation error: Invalid type for isbn13. Expected str, got int."
     mock_books_model.create_book.assert_not_called()
+
 
 def test_add_book_fail_invalid_data_key(mock_books_controller_with_model):
     """
@@ -120,3 +122,45 @@ def test_add_book_fail_invalid_data_key(mock_books_controller_with_model):
     assert result["message"] == "Validation error: 'Unexpected keys found: tittle'"
     mock_books_model.create_book.assert_not_called()
 
+
+def test_add_book_fail_unable_to_retrieve_new_book_id(mock_books_controller_with_model):
+    """
+    Given valid book data
+    When add book function is called but no new book_id is returned
+    Then status code 500 is returned
+    """
+    # Given
+    books_controller, mock_books_model = mock_books_controller_with_model
+    book_data = {
+        "isbn13": "9781501156786",
+        "author": "Stephen King",
+        "title": "Under the Dome",
+    }
+    mock_books_model.get_book_by_isbn.return_value = []
+    mock_books_model.create_book.return_value = None
+    # When
+    result = books_controller.add_book(book_data)
+    # Then
+    assert result["status_code"] == 500
+    assert result["message"] == "Failed to add book."
+
+
+def test_add_book_fail_general_exception(mock_books_controller_with_model):
+    """
+    Given valid book data
+    When add book function is called but an unexpected error occurs
+    Then an exception is raised and status code 500 is returned
+    """
+    # Given
+    books_controller, mock_books_model = mock_books_controller_with_model
+    book_data = {
+        "isbn13": "9781501156786",
+        "author": "Stephen King",
+        "title": "Under the Dome",
+    }
+    mock_books_model.get_book_by_isbn.side_effect = Exception("Unexpected database error")
+    # When
+    result = books_controller.add_book(book_data)
+    # Then
+    assert result["status_code"] == 500
+    assert result["message"] == "Error adding book: Unexpected database error"

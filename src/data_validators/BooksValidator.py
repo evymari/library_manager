@@ -98,5 +98,3 @@ class BooksValidator:
                     missing_fields.append(field)
         if missing_fields:
             raise ValueError(f"Required fields missing or empty: {', '.join(missing_fields)}")
-
-
