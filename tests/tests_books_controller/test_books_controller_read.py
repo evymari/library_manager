@@ -142,3 +142,20 @@ def test_search_books_validation_error_invalid_type(mock_books_controller_with_m
     # Then
     assert result["status_code"] == 400
     assert "Validation Error" in result["message"]
+
+
+def test_search_book_fail_general_exception(mock_books_controller_with_model):
+    """
+    Given valid data as search criteria,
+    When search_books function is called but an unexpected error occurs
+    Then an exception is raised and  status code 500 is returned
+    """
+    # Given
+    books_controller, mock_books_model = mock_books_controller_with_model
+    search_criteria = {"isbn13": "9780439023500"}
+    mock_books_model.search_books.side_effect = Exception("Unexpected database error")
+    # When
+    result = books_controller.search_books(search_criteria)
+    # Then
+    assert result["status_code"] == 500
+    assert result["message"] == "Error searching book: Unexpected database error"

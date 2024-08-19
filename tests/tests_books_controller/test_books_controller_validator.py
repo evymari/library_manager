@@ -193,10 +193,8 @@ def test_validate_required_fields_all_present():
         "title": "George's Marvelous Medicine",
     }
     # When
-    try:
-        validator.validate_data_type(data)
-    except ValueError:
-        pytest.fail("ValueError raised")
+    validator.validate_required_fields(data)
+    # No exception should be raised
 
 
 def test_fail_validate_required_fields_missing_fields():
@@ -247,10 +245,8 @@ def test_pass_validate_required_fields_update_missing_required_fields():
         "title": "George's Marvelous Medicine",
     }
     # When
-    try:
-        validator.validate_required_fields(data, is_update=True)
-    except ValueError:
-        pytest.fail("ValueError raised")
+    validator.validate_required_fields(data, is_update=True)
+    # No error should be raised
 
 
 def test_fail_validate_required_fields_update_with_empty_values():
@@ -269,6 +265,21 @@ def test_fail_validate_required_fields_update_with_empty_values():
     # When
     with pytest.raises(ValueError, match="Required fields missing or empty: isbn13, author"):
         validator.validate_required_fields(data, is_update=True)
+
+
+def test_fail_validate_data_is_not_dict():
+    """
+    Given data that is not a dictionary
+    When validate_data_is_dict function is called
+    Then a TypeError should be raised
+    """
+    # Given
+    validator = BooksValidator()
+    invalid_data = [[], "", 123, None]
+    # Then
+    for data in invalid_data:
+        with pytest.raises(TypeError, match="Data must be a dictionary."):
+            validator.validate_data_is_dict(invalid_data)
 
 
 # integration testing - book_data_validator
@@ -448,12 +459,12 @@ def test_validate_update_data_fail_invalid_data_key():
     validator = BooksValidator()
     update_data = {
         "title": "George's Marvelous Medicine",
-        "invalid_type": "George concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
+        "invalid_key": "George concocts a magical potion to cure his grandmother's nastiness, leading to unexpected and humorous results.",
         # invalid key (summary)
         "available": True  # invalid key (availability)
     }
     # When
-    with pytest.raises(ValueError, match="Invalid fields found: invalid_type, available"):
+    with pytest.raises(ValueError, match="Invalid fields found: invalid_key, available"):
         validator.validate_update_data(update_data)
 
 
@@ -472,4 +483,20 @@ def test_validate_update_data_fail_invalid_data_type():
     }
     # When
     with pytest.raises(TypeError, match="Invalid type for availability. Expected bool, got str."):
+        validator.validate_update_data(update_data)
+
+
+def test_validate_update_data_fail_invalid_date_format():
+    """
+    Given update_data with invalid date format
+    When validate_update_data function is called
+    Then a value error should be raised
+    """
+    # Given
+    validator = BooksValidator()
+    update_data = {
+        "original_publication_year": "1981-10-13"
+    }
+    # When
+    with pytest.raises(ValueError, match="Invalid date format for 1981-10-13. Expected format is DDMMYYYY."):
         validator.validate_update_data(update_data)

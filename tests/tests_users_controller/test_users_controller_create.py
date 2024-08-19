@@ -26,7 +26,7 @@ def test_add_user_successful(mock_users_controller):
     users_controller, mock_users_model = mock_users_controller
     mock_users_model.get_user_by_dni.return_value = None
     mock_users_model.get_user_email.return_value = None
-    mock_users_model.create_user.return_value = ('42326321C', 'Pika', 'Chu', '3@example.com', '123456789', '123 Pokemon St', 'active', 0, 5 )
+    mock_users_model.create_user.return_value = 123
 
     expected_result = dict(status_code=200, message="User created successfully")
 
@@ -35,6 +35,7 @@ def test_add_user_successful(mock_users_controller):
     mock_users_model.get_user_email.assert_called_with(user_data['email'])
     mock_users_model.create_user.assert_called_with(user_data)
     assert result == expected_result
+
 
 def test_add_user_dni_already_exists(mock_users_controller):
     """
@@ -65,7 +66,6 @@ def test_add_user_dni_already_exists(mock_users_controller):
     mock_users_model.get_user_email.assert_not_called()
     mock_users_model.create_user.assert_not_called()
     assert result == expected_result
-
 
 
 def test_add_user_email_already_exists(mock_users_controller):
@@ -100,6 +100,7 @@ def test_add_user_email_already_exists(mock_users_controller):
     mock_users_model.create_user.assert_not_called()
     assert result == expected_result
 
+
 def test_add_user_incorrect_data_value(mock_users_controller):
     """
           Given a new data and incorrect data value
@@ -122,12 +123,14 @@ def test_add_user_incorrect_data_value(mock_users_controller):
 
     users_controller, mock_users_model = mock_users_controller
 
-    expected_result = {"status_code": 400, "message": "Validation error: Invalid type for current_loans. Expected int, got str."}
+    expected_result = {"status_code": 400,
+                       "message": "Validation error: Invalid type for current_loans. Expected int, got str."}
     result = users_controller.add_user(user_data)
     mock_users_model.get_user_by_dni.assert_not_called()
     mock_users_model.get_user_email.assert_not_called()
     mock_users_model.create_user.assert_not_called()
     assert result == expected_result
+
 
 def test_add_user_incorrect_key(mock_users_controller):
     """
