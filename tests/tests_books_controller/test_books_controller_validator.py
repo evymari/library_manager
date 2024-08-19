@@ -5,9 +5,9 @@ from src.data_validators.BooksValidator import BooksValidator
 
 def test_get_book_by_isbn_book_exists(mock_books_controller_with_model):
     """
-        Given book isbn
-        When book exists using get_book_by_isbn function
-        Then return existing book id
+    Given book isbn
+    When book exists using get_book_by_isbn function
+    Then return existing book id
     """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
@@ -23,9 +23,9 @@ def test_get_book_by_isbn_book_exists(mock_books_controller_with_model):
 
 def test_get_book_by_isbn_book_does_not_exist(mock_books_controller_with_model):
     """
-        Given book isbn
-        When book does not exist using get_book_by_isbn function
-        Then return empty list
+    Given book isbn
+    When book does not exist using get_book_by_isbn function
+    Then return empty list
     """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
@@ -50,13 +50,13 @@ def test_update_stock_correctly(mock_books_controller_with_model):
     isbn = "9780142412084"
     initial_stock = 2
     mock_books_model.get_book_by_isbn.return_value = [(None, initial_stock)]
-    books_controller.books_model.update_stock(isbn)
+    books_controller.books_model.update_stock_by_isbn13(isbn)
     # When
     updated_stock = initial_stock + 1
     mock_books_model.get_book_by_isbn.return_value = [(None, updated_stock)]
     final_stock = books_controller.books_model.get_book_by_isbn(isbn)[0][1]
     mock_books_model.get_book_by_isbn.assert_any_call(isbn)
-    mock_books_model.update_stock.assert_called_once_with(isbn)
+    mock_books_model.update_stock_by_isbn13.assert_called_once_with(isbn)
     # Then
     assert final_stock == updated_stock
 

@@ -3,11 +3,11 @@ import pytest
 
 def test_search_books_by_title(mock_books_controller_with_model):
     """
-    Given search criteria title,
-     When search_books function is called
-    Then matching books are found
-     And status 200 is returned if books are found
-     """
+    Given existing book title as search criteria,
+    When search_books function is called
+    Then books with matching title are found
+    And status 200 is returned
+    """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
     # Mocked search criteria
@@ -27,11 +27,11 @@ def test_search_books_by_title(mock_books_controller_with_model):
 
 def test_search_books_by_author(mock_books_controller_with_model):
     """
-       Given search criteria author,
-      When search_books function is called
-     Then books with matching author are returned
-      And status 200 is returned if books are found
-      """
+    Given existing author as search criteria,
+    When search_books function is called
+    Then books with matching author are found
+    And status 200 is returned
+    """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
     # Mocked search criteria
@@ -50,11 +50,11 @@ def test_search_books_by_author(mock_books_controller_with_model):
 
 def test_search_books_by_isbn13(mock_books_controller_with_model):
     """
-           Given search criteria isbn13,
-          When search_books function is called
-          Then books with matching isbn13 are returned
-          And status 200 is returned if books are found
-          """
+    Given existing isbn as search criteria,
+    When search_books function is called
+    Then books with matching isbn are found
+    And status 200 is returned
+    """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
     # Mocked search criteria
@@ -76,9 +76,9 @@ def test_search_books_fail_missing_by_title(mock_books_controller_with_model):
     """
     Given search criteria of  title not in database,
     When search_books function is called,
-    Then an error message is returned
-     And status 404 is returned
-     """
+    Then no books are found, an error message is raised
+    And status 404 is returned
+    """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
     search_criteria = {"title": "Non-existent Book"}
@@ -94,9 +94,9 @@ def test_search_books_fail_missing_by_title(mock_books_controller_with_model):
 
 def test_search_books_by_author_error(mock_books_controller_with_model):
     """
-    Given search criteria author,
+    Given invalid author as search criteria,
     When search_books function is called,
-    Then an error message is returned
+    Then no books are not found, an error message is raised
     And status 404 is returned
     """
     # Given
@@ -113,9 +113,9 @@ def test_search_books_by_author_error(mock_books_controller_with_model):
 
 def test_search_books_validation_error_invalid_key(mock_books_controller_with_model):
     """
-    Given search criteria author incorrect key,
+    Given invalid key as search criteria,
     When search_books function is called,
-    Then an error message is returned
+    Then a validation error is raised
     And status 400 is returned
     """
     # Given
@@ -129,9 +129,9 @@ def test_search_books_validation_error_invalid_key(mock_books_controller_with_mo
 
 def test_search_books_validation_error_invalid_type(mock_books_controller_with_model):
     """
-    Given search criteria invalid type data,
+    Given invalid data type as search criteria,
     When search_books function is called,
-    Then an error message is returned
+    Then a validation error is raised
     And status 400 is returned
     """
     # Given

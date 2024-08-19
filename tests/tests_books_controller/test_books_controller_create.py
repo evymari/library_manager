@@ -53,7 +53,7 @@ def test_add_book_stock_updated_correctly(mock_books_controller_with_model):
     result = books_controller.add_book(book_data)
     # Then
     mock_books_model.get_book_by_isbn.assert_called_with("9781501156786")
-    mock_books_model.update_stock.assert_called_with("9781501156786")
+    mock_books_model.update_stock_by_isbn13.assert_called_with("9781501156786")
     assert result["status_code"] == 200
     assert result["message"] == "Book stock updated successfully"
 
