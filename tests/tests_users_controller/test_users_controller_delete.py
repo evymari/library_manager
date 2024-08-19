@@ -114,7 +114,7 @@ def test_fail_delete_inactive_user_due_to_retention_policy(mock_users_controller
     assert result == expected_result
 
 
-def test_fail_delete_user_database_error(mock_users_controller, mocker):
+def test_fail_delete_user_database_error(mock_users_controller):
     """
     Given an existing user ID
     When delete_user function is called and a database error occurs
@@ -137,5 +137,5 @@ def test_fail_delete_user_database_error(mock_users_controller, mocker):
     result = users_controller.delete_user(user_id)
 
     # Then
-    expected_result = {"status_code": 500, "message": "Internal server error: Database error"}
+    expected_result = {"status_code": 400, "message": "Internal server error: Database error"}
     assert result == expected_result

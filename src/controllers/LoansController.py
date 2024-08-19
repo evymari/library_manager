@@ -3,8 +3,7 @@ from models.UsersModel import UsersModel
 from models.BooksModel import BooksModel
 from src.services.NotificationService import NotificationService
 from src.utils.loan_formatting import format_loans
-from src.data_validators.LoansDataValidator import LoansDataValidator
-import logging
+from src.data_validators.LoansValidator import LoansValidator
 
 
 class LoansController:
@@ -12,7 +11,7 @@ class LoansController:
         self.loan_model = LoansModel()
         self.users_model = UsersModel()
         self.books_model = BooksModel()
-        self.loan_data_validator = LoansDataValidator()
+        self.loan_data_validator = LoansValidator()
         self.notification_service = NotificationService()
 
     def create_loan(self, user_id, book_id, due_date):
@@ -70,7 +69,7 @@ class LoansController:
         book_stock = self.books_model.get_book_stock(book_id)
         if book_stock is None:
             raise ValueError("Book not found")
-        self.books_model.check_book_stock(book_stock)
+        self.books_model.check_stock(book_stock)
         return book_stock
 
     def update_user_loans_count(self, user_id, user_data, change):
@@ -183,7 +182,7 @@ class LoansController:
 
     def notify_due_today(self):
         try:
-            loans_due_today = self.loan_model.get_loans_due_soon(0) # 0 = today
+            loans_due_today = self.loan_model.get_loans_due_soon(0)  # 0 = today
 
             for loan in loans_due_today:
                 user_id = loan["user_id"]
@@ -208,7 +207,6 @@ class LoansController:
             print(f"ValueError encountered: {str(ve)}")
         except Exception as e:
             print(f"Error in notify_overdue: {e}")
-
 
     def delete_loan(self, loan_id):
         try:

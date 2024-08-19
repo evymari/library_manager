@@ -27,12 +27,12 @@ def test_verify_book_no_stock(mock_loans_controller_with_book_model):
     """
     loans_controller, mock_book_model = mock_loans_controller_with_book_model
     mock_book_model.get_book_stock.return_value = 0
-    mock_book_model.check_book_stock.side_effect = ValueError("Book is out of stock")
+    mock_book_model.check_stock.side_effect = ValueError("Stock cannot be negative")
 
     book_id = 1
     with pytest.raises(ValueError) as e:
         loans_controller.verify_book_data(book_id)
-    assert str(e.value) == "Book is out of stock"
+    assert str(e.value) == "Stock cannot be negative"
 
 
 def test_verify_book_not_found(mock_loans_controller_with_book_model):

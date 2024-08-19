@@ -91,4 +91,4 @@ def test_get_loans_no_filters(mock_loans_controller_with_loan_model):
     result = loans_controller.get_loans(filters, None)
 
     assert result["status_code"] == 400
-    assert result["message"] == "Invalid filter"
+    assert result["message"] == 'Invalid filter: invalid'

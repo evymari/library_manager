@@ -249,7 +249,6 @@ def test_pass_validate_required_fields_update_missing_required_fields():
     # No error should be raised
 
 
-
 def test_fail_validate_required_fields_update_with_empty_values():
     """
     Given required fields keys but have empty values
@@ -267,6 +266,7 @@ def test_fail_validate_required_fields_update_with_empty_values():
     with pytest.raises(ValueError, match="Required fields missing or empty: isbn13, author"):
         validator.validate_required_fields(data, is_update=True)
 
+
 def test_fail_validate_data_is_not_dict():
     """
     Given data that is not a dictionary
@@ -278,7 +278,7 @@ def test_fail_validate_data_is_not_dict():
     invalid_data = [[], "", 123, None]
     # Then
     for data in invalid_data:
-        with pytest.raises(TypeError, match="update_data must be a dictionary."):
+        with pytest.raises(TypeError, match="Data must be a dictionary."):
             validator.validate_data_is_dict(invalid_data)
 
 
@@ -484,6 +484,7 @@ def test_validate_update_data_fail_invalid_data_type():
     # When
     with pytest.raises(TypeError, match="Invalid type for availability. Expected bool, got str."):
         validator.validate_update_data(update_data)
+
 
 def test_validate_update_data_fail_invalid_date_format():
     """

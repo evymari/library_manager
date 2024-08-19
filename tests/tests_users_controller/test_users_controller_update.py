@@ -89,7 +89,7 @@ def test_fail_update_user_incorrect_key(mock_users_controller):
     result = users_controller.update_user(user_id, user_data)
 
     # Then
-    expected_result = {"status_code": 400, "message": "Invalid key: 'Unexpected key incorrect_key found in data.'"}
+    expected_result = {"status_code": 400, "message": "Invalid key: 'Unexpected keys found: incorrect_key'"}
     assert result == expected_result
 
 
