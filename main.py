@@ -1,5 +1,6 @@
+from src.controllers.BooksController import BooksController
+from models.GenresModel import GenresModel
 
-from models.UsersModel import UsersModel
-
-user_model = UsersModel()
-print (user_model.get_user_by_dni('87654321C'))
+book = BooksController()
+search_criterio = {"author": "Suzanne Collins"}
+print(book.search_books(search_criterio))
