@@ -1,6 +1,4 @@
-from src.controllers.BooksController import BooksController
-from models.GenresModel import GenresModel
+from src.services.NotificationService import NotificationService
 
-book = BooksController()
-search_criterio = {"author": "Suzanne Collins"}
-print(book.search_books(search_criterio))
+notification = NotificationService()
+notification.send_email("vale.toni93@gmail.com", "test", "test")

@@ -46,3 +46,11 @@ def mock_loans_controller_with_user_and_book_mode_and_loan_model():
     loans_controller.users_model = mock_user_model
     loans_controller.books_model = mock_book_model
     return loans_controller, mock_loan_model, mock_user_model, mock_book_model
+
+
+@pytest.fixture
+def mock_loans_controller_with_notification_service(mock_loans_controller_with_loan_model):
+    loans_controller, mock_loan_model = mock_loans_controller_with_loan_model
+    mock_notification_service = Mock()
+    loans_controller.notification_service = mock_notification_service
+    return loans_controller, mock_loan_model, mock_notification_service

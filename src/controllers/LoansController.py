@@ -1,6 +1,7 @@
 from models.LoansModel import LoansModel
 from models.UsersModel import UsersModel
 from models.BooksModel import BooksModel
+from src.services.NotificationService import NotificationService
 from src.utils.loan_formatting import format_loans
 from src.data_validators.LoansDataValidator import LoansDataValidator
 import logging
@@ -12,6 +13,7 @@ class LoansController:
         self.users_model = UsersModel()
         self.books_model = BooksModel()
         self.loan_data_validator = LoansDataValidator()
+        self.notification_service = NotificationService()
 
     def create_loan(self, user_id, book_id, due_date):
         loan_data = {
@@ -130,10 +132,10 @@ class LoansController:
                 "message": "Book returned successfully"
             }
         except ValueError as ve:
-            logging.error(f"ValueError encountered: {str(ve)}")
+            print(f"ValueError encountered: {str(ve)}")
             return {"status_code": 400, "message": str(ve)}
         except Exception as e:
-            logging.error(f"Error returning book: {str(e)}")
+            print(f"Error returning book: {str(e)}")
             return {"status_code": 500, "message": "Internal server error: " + str(e)}
 
     @staticmethod
@@ -152,7 +154,7 @@ class LoansController:
                 raise ValueError("Failed to update loan status")
             return result
         except Exception as e:
-            logging.error(f"Error updating loan status for loan ID {loan_id}: {str(e)}")
+            print(f"Error updating loan status for loan ID {loan_id}: {str(e)}")
             raise
 
     def update_return_date(self, loan_id):
@@ -162,5 +164,48 @@ class LoansController:
                 raise ValueError("Failed to update return date")
             return result
         except Exception as e:
-            logging.error(f"Error updating return date for loan ID {loan_id}: {str(e)}")
+            print(f"Error updating return date for loan ID {loan_id}: {str(e)}")
             raise
+
+    def notify_due_soon(self):
+        try:
+            loans_due_soon = self.loan_model.get_loans_due_soon(5)
+            for loan in loans_due_soon:
+                user_id = loan["user_id"]
+                book_id = loan["book_id"]
+                due_date = loan["due_date"]
+
+                self.notification_service.send_due_soon_email(user_id, book_id, due_date)
+        except ValueError as ve:
+            print(f"ValueError encountered: {str(ve)}")
+        except Exception as e:
+            print(f"Error in notify_due_soon: {e}")
+
+    def notify_due_today(self):
+        try:
+            loans_due_today = self.loan_model.get_loans_due_soon(0) # 0 = today
+
+            for loan in loans_due_today:
+                user_id = loan["user_id"]
+                book_id = loan["book_id"]
+                due_date = loan["due_date"]
+
+                self.notification_service.send_due_today_email(user_id, book_id, due_date)
+        except ValueError as ve:
+            print(f"ValueError encountered: {str(ve)}")
+        except Exception as e:
+            print(f"Error in notify_due_today: {e}")
+
+    def notify_overdue(self):
+        try:
+            loans_overdue = self.loan_model.get_overdue_loans(3)
+            for loan in loans_overdue:
+                user_id = loan["user_id"]
+                book_id = loan["book_id"]
+
+                self.notification_service.send_overdue_email(user_id, book_id)
+        except ValueError as ve:
+            print(f"ValueError encountered: {str(ve)}")
+        except Exception as e:
+            print(f"Error in notify_overdue: {e}")
+
