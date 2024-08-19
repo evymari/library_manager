@@ -10,3 +10,4 @@ def mock_users_controller():
     users_controller = UsersController()
     users_controller.user_model = mock_users_model
     return users_controller, mock_users_model
+

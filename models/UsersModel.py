@@ -36,7 +36,6 @@ class UsersModel:
         query = f"UPDATE users SET {set_clause} WHERE id = %s RETURNING *;"
         try:
             result = self.db.execute_query(query, params)
-            print("Result from update_user in UsersModel: " + str(result))
             return result
         except psycopg2.IntegrityError as e:
             print(f"IntegrityError updating user {user_id}: {e}")
@@ -92,3 +91,65 @@ class UsersModel:
         except Exception as e:
             print(f"Error suspending user {user_id}: {e}")
             return None
+
+    def delete_user(self, user_id):
+        query = "DELETE FROM users WHERE id = %s RETURNING id;"
+        try:
+            result = self.db.execute_query(query, (user_id,))
+            return result[0][0] if result else None
+        except psycopg2.IntegrityError as e:
+            raise RuntimeError(f"IntegrityError deleting user {user_id}: {e}")
+        except Exception as e:
+            raise RuntimeError(f"Error deleting user {user_id}: {e}")
+
+
+    def create_user(self, data):
+        query = ("INSERT INTO users (dni, name, surname, email, phone, address, status, current_loans, max_loans) "
+                 "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id")
+        params = (data.get("dni"),
+                  data.get("name"),
+                  data.get("surname"),
+                  data.get("email"),
+                  data.get("phone", None),
+                  data.get("address", None),
+                  data.get("status", "active"),
+                  data.get("current_loans", 0),
+                  data.get("max_loans", 5))
+
+        try:
+            result = self.db.execute_CUD_query(query, params)
+            return result
+
+        except Exception as e:
+            print(f"Error creating user {e}")
+            return None
+
+    """find out if user is already registered"""
+
+    def get_user_by_dni(self, dni):
+
+        query = "SELECT dni FROM users WHERE dni = %s;"
+        params = (dni,)
+
+        try:
+            result = self.db.execute_query(query, params)
+            if result:
+                return result[0][0]
+        except Exception as e:
+            print (f"An error occurred while getting user: {e}")
+            return None
+
+    def get_user_email(self, email):
+
+        query = "SELECT email FROM users WHERE email = %s;"
+        params = (email,)
+
+        try:
+            result = self.db.execute_query(query, params)
+            if result:
+                return result[0][0]
+        except Exception as e:
+            print(f"An error occurred while getting user: {e}")
+            return None
+
+

@@ -145,6 +145,20 @@ class LoansModel:
             print(f"Error getting loan by id: {e}")
             return None
 
+    # añadido para la verificación de delete users, que no se borre el usuario si tiene loans pendientes
+    # borrar este comentario una vez visto y entendido el porque de esto.
+    def get_loans_by_user_id(self, user_id):
+        try:
+            print(f"Querying loans for user_id: {user_id}")
+            query = "SELECT * FROM loans WHERE user_id = %s"
+            params = (user_id,)
+            results = self.db.execute_query(query, params)
+            print("verifies the results of the loans:", results)  # Verifica los resultados aquí
+            return results
+        except Exception as e:
+            print(f"Error executing manual query: {e}")
+            return None
+
     def get_loans_due_soon(self, days_before_due):
         try:
             query = """
