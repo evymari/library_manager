@@ -1,7 +1,7 @@
 import psycopg2
 from datetime import datetime
-from psycopg2 import errors
 from config.DBConnection import DBConnection
+from psycopg2 import errors
 
 
 class LoansModel:
@@ -19,9 +19,6 @@ class LoansModel:
             result = self.db.execute_query(query, params)
             if result:
                 return result[0][0]
-            return None
-        except errors.InvalidTextRepresentation as e:
-            print(f"Invalid input syntax: {e}")
             return None
         except psycopg2.IntegrityError as e:
             print(f"Integrity error: {e}")
@@ -145,8 +142,6 @@ class LoansModel:
             print(f"Error getting loan by id: {e}")
             return None
 
-    # añadido para la verificación de delete users, que no se borre el usuario si tiene loans pendientes
-    # borrar este comentario una vez visto y entendido el porque de esto.
     def get_loans_by_user_id(self, user_id):
         try:
             print(f"Querying loans for user_id: {user_id}")
@@ -183,3 +178,17 @@ class LoansModel:
             print(f"Error fetching overdue loans for {days_overdue} days: {e}")
             return []
 
+    def delete_loan(self, loan_id):
+        try:
+            query = "DELETE FROM loans WHERE loan_id = %s"
+            params = (loan_id,)
+            self.db.execute_query(query, params)
+        except psycopg2.IntegrityError as e:
+            print(f"Integrity error: {e}")
+            return None
+        except psycopg2.ProgrammingError as e:
+            print(f"Programming error: {e}")
+            return None
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return None
