@@ -1,4 +1,6 @@
 import os
+import time
+
 from dotenv import load_dotenv
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -99,29 +101,27 @@ class NotificationService:
 
     @staticmethod
     def send_email(to_email, subject, message):
+        smtp_server = os.getenv("SMTP_SERVER")
+        smtp_port = os.getenv("SMTP_PORT")
+        from_email = os.getenv("EMAIL_USER")
+        from_password = os.getenv("EMAIL_PASSWORD")
+
+        if not all([smtp_server, smtp_port, from_email, from_password]):
+            raise ValueError("Missing email configuration environment variables")
+
         try:
-            smtp_server = os.getenv("SMTP_SERVER")
-            smtp_port = os.getenv("SMTP_PORT")
-            from_email = os.getenv("EMAIL_USER")
-            from_password = os.getenv("EMAIL_PASSWORD")
-
-            if not all([smtp_server, smtp_port, from_email, from_password]):
-                raise ValueError("Missing email configuration environment variables")
-
             email_message = MIMEMultipart()
             email_message['From'] = from_email
             email_message['To'] = to_email
             email_message['Subject'] = subject
             email_message.attach(MIMEText(message, 'plain'))
 
-            server = smtplib.SMTP(smtp_server, int(smtp_port))
-            server.starttls()
-            server.login(from_email, from_password)
-            server.send_message(email_message)
-            server.quit()
+            with smtplib.SMTP(smtp_server, int(smtp_port)) as server:
+                server.ehlo()
+                server.starttls()
+                server.login(from_email, from_password)
+                server.sendmail(from_email, to_email, email_message.as_string())
 
             print(f"Email sent to {to_email}: {subject}")
-        except ValueError as e:
-            print(f"ValueError sending email to {to_email}: {e}")
         except Exception as e:
             print(f"Error sending email to {to_email}: {e}")

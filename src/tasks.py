@@ -5,6 +5,7 @@ from src.controllers.LoansController import LoansController
 
 app = Celery('tasks', broker='redis://localhost:6379/0')
 
+
 @app.task
 def notify_users():
     loans_controller = LoansController()
