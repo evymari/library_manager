@@ -144,3 +144,17 @@ class BooksModel:
     def check_book_stock(book_stock):
         if book_stock <= 0:
             raise ValueError("Book is out of stock")
+
+    def get_book_by_id(self, book_id):
+        try:
+            query = "SELECT * FROM books WHERE book_id = %s"
+            result = self.db.execute_query(query, (book_id,))
+            if result:
+                return result[0]
+            raise ValueError("Book not found")
+        except ValueError as ve:
+            print(f"ValueError encountered: {str(ve)}")
+            return None
+        except Exception as e:
+            print(f"Error getting book by ID: {e}")
+            return None

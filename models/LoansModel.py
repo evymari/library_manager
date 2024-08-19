@@ -144,3 +144,28 @@ class LoansModel:
         except Exception as e:
             print(f"Error getting loan by id: {e}")
             return None
+
+    def get_loans_due_soon(self, days_before_due):
+        try:
+            query = """
+                SELECT * FROM loans 
+                WHERE due_date = CURRENT_DATE + INTERVAL %s DAY
+                AND status = 'loaned';
+            """
+            return self.db.execute_query(query, (days_before_due,))
+        except Exception as e:
+            print(f"Error fetching loans due in {days_before_due} days: {e}")
+            return []
+
+    def get_overdue_loans(self, days_overdue):
+        try:
+            query = """
+                SELECT * FROM loans 
+                WHERE due_date < CURRENT_DATE - INTERVAL %s DAY
+                AND status = 'loaned';
+            """
+            return self.db.execute_query(query, (days_overdue,))
+        except Exception as e:
+            print(f"Error fetching overdue loans for {days_overdue} days: {e}")
+            return []
+
