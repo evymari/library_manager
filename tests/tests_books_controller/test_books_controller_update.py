@@ -6,7 +6,7 @@ def test_update_book_updated_correctly(mock_books_controller_with_model):
     Given correct update data
     When update book function is called
     Then data is updated correctly
-    And status 200 is returned
+    And status code 200 is returned
     """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
@@ -34,7 +34,7 @@ def test_update_book_validation_error(mock_books_controller_with_model):
     Given invalid update data
     When update book function is called
     Then a validation error is raised
-    And status 400 is returned
+    And status code 400 is returned
     """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
@@ -55,7 +55,7 @@ def test_update_book_failure(mock_books_controller_with_model):
     Given valid update data
     When update book function is called
     And the update operation fails
-    Then a status 500 is returned
+    Then a status code 500 is returned
     """
     # Given
     books_controller, mock_books_model = mock_books_controller_with_model
@@ -72,3 +72,22 @@ def test_update_book_failure(mock_books_controller_with_model):
     mock_books_model.update_book.assert_called_once_with(book_id, update_data)
     assert result["status_code"] == 500
     assert result["message"] == "Failed to update book"
+
+def test_update_book_fail_general_exception(mock_books_controller_with_model):
+    """
+    Given valid update data
+    When update book function is called but an unexpected error occurs
+    Then an exception is raised and  status code 500 is returned
+    """
+    # Given
+    books_controller, mock_books_model = mock_books_controller_with_model
+    book_id = 123
+    update_data = {
+        "title": "Under the Stars",
+    }
+    mock_books_model.update_book.side_effect = Exception("Unexpected database error")
+    # When
+    result = books_controller.update_book(book_id, update_data)
+    # Then
+    assert result["status_code"] == 500
+    assert result["message"] == "Error updating book: Unexpected database error"

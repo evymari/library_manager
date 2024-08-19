@@ -43,3 +43,4 @@ class BooksValidator(GeneralValidator):
         self.validate_data_type(valid_fields)
         self.validate_required_fields(update_data, is_update=True)
         return valid_fields
+
