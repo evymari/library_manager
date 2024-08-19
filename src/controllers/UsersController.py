@@ -25,7 +25,7 @@ class UsersController:
                 raise ValueError('Ínvalid data')
 
             if "email" in user_data:
-                if not self.user_validator.validate_email(user_data["email"]):
+                if not self.user_validator.validate_email_address(user_data["email"]):
                     raise ValueError('´Not valid email input')
 
             result = self.user_model.update_user(user_id, user_data)
