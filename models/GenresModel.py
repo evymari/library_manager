@@ -1,5 +1,6 @@
 from config.DBConnection import DBConnection
 
+
 class GenresModel:
     def __init__(self):
         self.db_connection = DBConnection()
