@@ -116,7 +116,7 @@ class BooksController:
 
             if existing_book:
                 # Si el libro existe, eliminarlo de la base de datos
-                self.books_model.remove_book(isbn13)
+                self.books_model.delete_book(isbn13)
                 print(f"Book with ISBN {isbn13} has been deleted.")
                 return dict(status_code=200, message="Book deleted successfully")
             else:
