@@ -76,45 +76,69 @@ def test_search_books_by_isbn13(mock_books_controller_with_model):
 
 def test_search_books_fail_missing_by_title(mock_books_controller_with_model):
     """
-    Given search criteria,
-    When search_books function is called and an error occurs,
+    Given search criteria of  title not in database,
+    When search_books function is called,
     Then an error message is returned
-     And status 5
-
-     And status 500 is returned
+     And status 404 is returned
      """
     books_controller, mock_books_model = mock_books_controller_with_model
     # Mocked search criteria
     search_criteria = {"title": "Non-existent Book"}
+    expected_books = []
+    mock_books_model.search_books.return_value = expected_books
 
-    expected_books = [
-        {"book_id": 123, "title": "Under the Dome", "author": "Stephen King"},
-        {"book_id": 456, "title": "Under the Dome", "author": "Another Author"}
-    ]
-
-    mock_books_model.search_books.side_effect = Exception("Database error")
     result = books_controller.search_books(search_criteria)
     mock_books_model.search_books.assert_called_with(None, "Non-existent Book", None, None, None, None, None, None)
 
-    assert result["status_code"] == 500
-    assert "Error searching book" in result["message"]
+    assert result["status_code"] == 404
+    assert "No books found" in result["message"]
 
 
 def test_search_books_by_author_error(mock_books_controller_with_model):
     """
     Given search criteria author,
-    When search_books function is called and an error occurs,
+    When search_books function is called,
     Then an error message is returned
-    And status 500 is returned
+    And status 404 is returned
     """
     books_controller, mock_books_model = mock_books_controller_with_model
-    search_criteria = {"author": "Suzanne Collins"}
-
-    mock_books_model.search_books.side_effect = Exception("Database error")
+    search_criteria = {"author": "unknown_author"}
+    expected_books = []
+    mock_books_model.search_books.return_value = expected_books
 
     result = books_controller.search_books(search_criteria)
 
-    mock_books_model.search_books.assert_called_with("Suzanne Collins", None, None, None, None, None, None, None)
+    mock_books_model.search_books.assert_called_with("unknown_author", None, None, None, None, None, None, None)
 
-    assert result["status_code"] == 500
-    assert "Error searching book" in result["message"]
+    assert result["status_code"] == 404
+    assert "No books found" in result["message"]
+
+def test_search_books_validation_error_invalid_key(mock_books_controller_with_model):
+    """
+    Given search criteria author incorrect key,
+    When search_books function is called,
+    Then an error message is returned
+    And status 400 is returned
+    """
+    books_controller, mock_books_model = mock_books_controller_with_model
+    search_criteria = {"invalid_key": "Suzanne Collins"}
+
+    result = books_controller.search_books(search_criteria)
+
+    assert result["status_code"] == 400
+    assert "Validation Error" in result["message"]
+
+def test_search_books_validation_error_invalid_type(mock_books_controller_with_model):
+    """
+    Given search criteria invalid type data,
+    When search_books function is called,
+    Then an error message is returned
+    And status 400 is returned
+    """
+    books_controller, mock_books_model = mock_books_controller_with_model
+    search_criteria = {"isbn13": 123434}
+
+    result = books_controller.search_books(search_criteria)
+
+    assert result["status_code"] == 400
+    assert "Validation Error" in result["message"]
