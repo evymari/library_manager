@@ -1,7 +1,21 @@
 from datetime import datetime
+from src.data_validators.GeneralValidator import GeneralValidator
 
 
-class LoansDataValidator:
+class LoansValidator(GeneralValidator):
+    def __init__(self):
+        super().__init__(
+            expected_types={
+                "loan_id": int,
+                "book_id": int,
+                "user_id": int,
+                "status": str,
+                "start_loan_date": datetime,
+                "return_date": datetime,
+                "due_date": datetime,
+            }
+        )
+
     @staticmethod
     def validate_ids(user_id, book_id):
         if not isinstance(user_id, int) or not isinstance(book_id, int):
@@ -27,5 +41,5 @@ class LoansDataValidator:
         valid_filters = {"loan_id", "book_id", "user_id", "status", "start_loan_date", "return_date", "due_date"}
         for key in filters.keys():
             if key not in valid_filters:
-                return False, f"Invalid filter"
+                return False, f"Invalid filter: {key}"
         return True, ""

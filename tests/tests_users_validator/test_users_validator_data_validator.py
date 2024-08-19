@@ -110,5 +110,5 @@ def test_data_validator_unexpected_key(users_validator):
     }
 
     # When / Then
-    with pytest.raises(KeyError, match="Unexpected key unexpected_key found in data."):
+    with pytest.raises(KeyError, match="'Unexpected keys found: unexpected_key'"):
         users_validator.data_validator(invalid_data)
