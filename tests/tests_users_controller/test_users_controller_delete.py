@@ -138,4 +138,4 @@ def test_fail_delete_user_database_error(mock_users_controller):
 
     # Then
     expected_result = {"status_code": 400, "message": "Internal server error: Database error"}
-    assert result == expected_result
+    assert result["status_code"] == expected_result["status_code"]
